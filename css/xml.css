@@ -1,0 +1,46 @@
+stredisko {
+	max-width: 600px;
+}
+nazev {
+	font-size: 21px;
+	font-weight: bold;
+	line-height: 40px;
+}
+stredisko > detail {
+	display: none; 
+}
+stredisko:hover > detail {
+	display: block; 
+}
+detail > * {
+	display: block; 
+}
+detail {
+	padding: 10px;
+}
+telefon1, adresa {
+	width: 100%;
+}
+detail + kontakt > * {
+	padding: 10px;
+}
+kontakty {
+	display: table; 
+	padding: 10px 0;
+}
+kontakt {
+	display: table-row; 
+}
+kontakt > * {
+	display: table-cell;
+	padding: 0 10px; 
+}
+.zahlavi {
+	color: white;
+	font-weight: bolder;
+	background-color: #FF6D00;
+	vertical-align: top;
+}
+.tucne {
+	font-weight: bold;
+}
