@@ -12,11 +12,31 @@ $(document).ready(function() {
 		location = $(this).attr('path');
 	});
 	DnesJe();
+	
+	let menuButton = document.getElementById('menu-button')
+	let menuDrawer = document.getElementById('menu')
+	
+	let menuOpen = false
+	function toggleMenu(){
+		menuOpen = !menuOpen;
+		menuButton.classList.toggle('menu-open')
+		menuDrawer.classList.toggle('menu-open')
+	}
+	if(menuButton){
+		menuButton.onclick = (e) => {
+			e.cancelBubble = true;
+			toggleMenu()
+		}
+		window.onclick = () => {
+			if(!menuOpen) return
+			toggleMenu()
+		}
+	}
 });
+
 function DnesJe() {
 	mojePC = new Date();
 	DatumServeru=new Date(mojePC-top.Rozdil);
 	$("#AktCas").html(dny[DatumServeru.getDay()]+' '+DatumServeru.toLocaleString());
 	setTimeout("DnesJe()",1000);
 }
-

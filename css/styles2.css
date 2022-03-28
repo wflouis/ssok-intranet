@@ -1,0 +1,369 @@
+* {
+  padding:0;
+  margin:0;
+  min-width: 0;
+}
+:root{
+  --headerHeight:80px;
+  --pagePadding:8vw;
+
+  /* --primaryColor:rgb(29, 120, 155,.9); */
+  --primaryColor:rgba(28, 140, 184, 0.9);
+  --primaryDarkLight:rgba(22, 114, 150, 0.9);
+  --primaryDark:rgba(0, 16, 29,.9);
+  --primaryFade:rgba(42, 154, 198, 0.4);
+  --gray:#2a2a2acb;
+}
+body {
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 400;
+	color: #d5d5d5;
+	font-size: 14px;
+	line-height: 20px;
+	width: 100%;
+	height: 100%;
+	background-color: #00233e;
+    background-image: url("../images/cesta.jpg");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+	background-size: cover;
+	background-position-x: center;
+	background-position-y: center;
+}
+
+a{
+	color: #8184ff;
+	text-decoration: none;
+	user-select: none;
+}
+a:hover{
+  cursor: pointer;
+  text-decoration:underline;
+}
+
+.sgap{
+  min-width:5px;
+  min-height:5px;
+}
+.gap{
+  min-width:10px;
+  min-height:10px;
+}
+.gap-stretch-h{
+  margin-left:auto;
+  margin-right:auto;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	margin-bottom: 10px;
+	font-weight: 500;
+	line-height: 1.1;
+}
+/* Override the bootstrap defaults */
+h1 {
+	font-size: 33px;
+}
+h2 {
+	font-size: 27px;
+}
+h3,.f21 {
+	font-size: 21px;
+}
+h4,.f15 {
+	font-size: 15px;
+}
+h5,.f12 {
+	font-size: 12px;
+}
+h6 {
+	font-size: 10.2px;
+}
+/* legend {
+	font-size: 18px;
+	padding: 7px 0px;
+} */
+
+.header{
+  position: fixed;
+	top:0;
+	left:0;
+	right:0;
+  
+  padding-top:10px;
+  padding-bottom:10px;
+  padding-right:var(--pagePadding);
+  padding-left:var(--pagePadding);
+  
+	display: flex;
+	align-items: center;
+  justify-content: space-between;
+  
+	height:var(--headerHeight);
+	box-sizing:border-box;
+	
+  /* background-image: url("../images/pozadi.jpg"); */
+  background-image: radial-gradient(circle at center, var(--primaryColor), var(--primaryDark));
+	background-position: center;
+  background-repeat: no-repeat;
+	background-size: cover;
+	/* opacity: .9; */
+	
+	z-index: 1;
+}
+.header-logo{
+  width:300px;
+}
+.header-center{
+  position: fixed;
+  left:50%;
+  transform:translateX(-50%);
+  text-align: center;
+}
+.header-time{
+  font-size:large;
+}
+.header-account{
+  display:flex;
+  align-items: center;
+}
+.header-account-name{
+  font-size: large;
+  margin-left:5px;
+}
+.header-menu{
+  display:none;
+  
+  padding:10px;
+  padding-right:15px;
+  
+  height:100%;
+  align-items: center;
+}
+.header-menu:hover{
+  cursor:pointer;
+}
+
+.header-menu.menu-open > .header-menu-close-icon{
+  display:none;
+}
+.header-menu:not(.menu-open) > .header-menu-open-icon{
+  display:none;
+}
+.header-menu-open-icon::after{
+	content: "\f0c9";
+}
+.header-menu-close-icon::after{
+	content: "\f00d";
+}
+
+.page {
+  margin-top:var(--headerHeight);
+	padding-top:15px;
+  padding-left:var(--pagePadding);
+  padding-right:var(--pagePadding);
+  
+  display:flex;
+}
+
+.obsah {
+  /* background-color: #2a2a2ab0; */
+  background-color: #2a2a2acb;
+  padding: 15px;
+  margin-bottom:20vh;
+
+  overflow-x:auto;
+}
+.menu {
+  width: 200px;
+	margin-right:15px;
+  flex-shrink: 0;
+}
+.menu > a {
+  position: relative;
+	display: block;
+	text-decoration: none;
+	padding: 4px 15px;
+	margin: 1px 0;
+	background-image: linear-gradient(to right, var(--primaryColor), #0000);
+	color: white;
+}
+.menu a:hover, .menu a.active {
+	background-image: linear-gradient(to right, #2d5665, #0000);
+}
+
+.login {
+	width: 400px;
+	margin: 15px auto;
+}
+.login-btn{
+  float:right;
+}
+label {
+	font-size: 13px;
+	font-weight: normal;
+	/* color: var(--primaryColor); */
+  /* color: #23a1d1; */
+}
+.txt{
+  display:block;
+  width:100%;
+  font-size: 12px;
+
+  box-sizing: border-box;
+  padding:10px 13px;
+  margin:5px 0;
+
+  border-radius:5px;
+  border:1px solid gray;
+}
+.txt-width{
+  width:250px;
+}
+.btn, button {
+	padding: 7.5px 12px;
+  margin:5px;
+  box-sizing: border-box;
+  
+	font-size: 12px;
+  color: #ffffff;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  
+	background-color: var(--primaryColor);
+	background-image: linear-gradient(to bottom, var(--primaryColor), var(--primaryDarkLight));
+
+	border: 1px solid #cccccc;
+	border-radius: 4px;
+	border-color: var(--primaryColor) var(--primaryColor) var(--primaryDarkLight);
+
+	box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+}
+.btn-width{
+  width:50px;
+}
+.btn:hover{
+  cursor:pointer;
+}
+.btn:active {
+	background-image: linear-gradient(to top, var(--primaryColor), var(--primaryDarkLight));;
+}
+
+.search-text{
+	max-height: 15vh;
+	overflow-y:auto;
+}
+.flex{
+  display:flex;
+}
+.flex-center-v{
+	align-items: center;
+}
+
+.zprava {
+	border: 1px solid var(--primaryColor);
+	border-radius: 5px;
+	background-color: var(--gray);
+	opacity: 0.8;
+	margin: 4px 0;
+	color: white;
+}
+.zprava div {
+	padding: 5px 15px;
+}
+.zahlaviZpravy {
+	background-image: linear-gradient(to bottom, var(--primaryColor), #0000);
+	color: white;
+}
+.zprava div.textZpravy {
+	padding: 10px 15px;
+}
+
+.table {
+	width: auto;
+/*	border-radius: 4px;
+	border: 1px solid #1c7496; */
+	border-collapse: inherit;
+}
+.table thead {
+	color: #fff;
+	font-size: small;
+	background-image: linear-gradient(to bottom, #003448ad, #00b8ff70);
+}
+thead td {
+	padding:5px 10px;
+	user-select: none;
+}
+thead td.sort-asc:after {
+	font-family: FontAwesome; 
+	content: "\f15d";
+	margin-left:5px;
+}
+thead td.sort-desc:after {
+	font-family: FontAwesome; 
+	content: "\f15e"; 
+	margin-left:5px;
+}
+thead td.sort-num-down:after {
+	font-family: FontAwesome; 
+	content: "\f163"; 
+	margin-left:5px;
+}
+thead td.sort-num-up:after {
+	font-family: FontAwesome; 
+	content: "\f162";
+	margin-left:5px;
+}
+
+tbody td {
+	border: 0;
+	padding: 4px 8px;
+	vertical-align: middle;
+}
+#folders tbody tr:hover {
+	background-color: var(--primaryFade);
+	color: white;
+}
+thead td:not([nosort]):hover{
+	cursor:pointer;
+}
+#folders tbody tr:hover{
+	cursor:pointer;
+}
+tr:nth-child(even) {
+	background-color: #a0a0a05c;
+}
+table img {
+	height: 30px;
+}
+.text-right{
+  text-align:right;
+}
+.table-filename{
+	word-break:break-all;
+}
+
+tr.edit > .action-default, tr.create > .action-default{
+	display:none;
+}
+tr:not(.edit) > .action-edit{
+	display:none;
+}
+tr:not(.create) > .action-create{
+	display:none;
+}
+
+tr.edit > td, tr.create > td{
+	padding-top:20px;
+	padding-bottom:20px;
+}
+td{
+  white-space: nowrap;
+}
+
+.select-menu{
+	padding:5px;
+	max-width:100%;
+}
+
+#strediska td[name='ostatni']{
+	white-space:break-spaces;
+}

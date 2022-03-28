@@ -1,12 +1,24 @@
 <?php
-	include "over.php"; 
+	$homePage = true;
+
+	include "over.php";
 	if (empty($_GET["modul"])) {
 		Header("Location: index.php");
 		exit;
 	}
-	$result = mysqli_query($link,"SELECT * FROM menu_moduly WHERE id_modulu='".$_GET["modul"]."'");
+	
+	$stmt = mysqli_prepare($link, "SELECT * FROM menu_moduly
+	JOIN pristprava on pristprava.id_modulu = menu_moduly.id_modulu
+	WHERE pristprava.id_modulu = ? and pristprava.id_jmeno = ?
+	");
+	$stmt->bind_param('ii', $_GET['modul'], $_SESSION['id_jmeno']);
+	$stmt->execute();
+	$result = $stmt->get_result();
+
 	if ($radek = mysqli_fetch_assoc($result)) {
-		$modulPath = "/mnt/tonda/".$radek["adresar"]."/";
+		// $modulPath = "/mnt/tonda/".$radek["adresar"]."/";
+		$modulPath = "images";
+		$title = $radek['popis'];
 	} else {
 		$modulPath = "";
 	}
@@ -53,50 +65,50 @@
 		"mp4"  => 'mov.png',
 		"mts"=> 'mov.png'
 	);
-	include "hlava.php"; 
-	include "nabidka.php"; 
+	include "hlava.php";
+	include "nabidka.php";
 ?>
 
-	    <div class="col-sm-9">
-			<h2>Dokumenty SSOK</h2>
-			<div class="obsah">
-				<p>Kliknutím na záhlaví sloupce dojde k seřazení záznamů dle příslušného sloupce. V poli vyhledat je možné zadat vyhledávací řětezce, kterými mohou být části názvu hledaného souboru oddělené mezerou. Při zadání více řetězců program hledá současný výskyt všech uvedených řetezců v kterékoliv části názvu souboru. Vyhledávání probíhá vždy pouze ve vybraném adresáři a jeho podadresářích.</p>
-				<form id="hledat" action="soubory.php" method="get">
-				<div class="hledat">
-					<INPUT name="modul" type="hidden" value="<?php echo $_GET["modul"]; ?>">
-					<INPUT name="path" type="hidden" value="<?php echo $path; ?>">
-					<INPUT class="form-control" name="najit" type="text" value="<?php echo $najit; ?>" placeholder="Hledaný text ...">
-					<span class="input-group-btn">
-	    				<button type="button" class="btn btn-default btn-lg"><i class="fa fa-search"></i></button>
-	  				</span>
-				</div>
-				</form> 
-				<div class="table-responsive">
-		        	<table id="folders" class="table">
-			            <thead>
-			              <tr path="soubory.php?modul=<?php echo $_GET["modul"]; ?>&path=<?php echo $path; ?>">
-			                <td class="text-left<?php echo (($_SESSION["podle"]=="1")? (($_SESSION["smer"]%2==0)?" sort-down":" sort-up"):""); ?>" colspan="2" sort="1">Název souboru</td>
-			                <td class="text-left<?php echo (($_SESSION["podle"]=="2")? (($_SESSION["smer"]%2==0)?" sort-num-down":" sort-num-up"):""); ?>" sort="2">datum</td>
-			                <td class="text-right<?php echo (($_SESSION["podle"]=="3")? (($_SESSION["smer"]%2==0)?" sort-num-down":" sort-num-up"):""); ?>" sort="3" width="80">velikost</td>
-			              </tr>
-			            </thead>
-						<tbody>
-							<?php obsahAdr($modulPath,$path,"1",$_SESSION["podle"],$najit) ?>
-						</tbody>
-					</table>
-				</div>
+<div>
+	<h2><?=$title?></h2>
+	<div class="obsah">
+		<p class="search-text">Kliknutím na záhlaví sloupce dojde k seřazení záznamů dle příslušného sloupce.<br>
+			V poli vyhledat je možné zadat vyhledávací řetezce, kterými mohou být části názvu hledaného souboru oddělené mezerou.<br>
+			Při zadání více řetězců program hledá současný výskyt všech uvedených řetezců v kterékoliv části názvu souboru.<br>
+			Vyhledávání probíhá vždy pouze ve vybraném adresáři a jeho podadresářích.</p>
+		<form id="hledat" action="soubory.php" method="get">
+			<input name="modul" type="hidden" value="<?=$_GET["modul"]?>">
+			<input name="path" type="hidden" value="<?=$path?>">
+			<div class='flex'>
+				<input class='txt txt-width' name="najit" type="text" placeholder="Hledaný text ...">
+				<button class='btn btn-width'><i class='fa fa-search'></i></button>
 			</div>
-	    </div>
+			<div class='gap'></div>
+		</form>
+		<table id="folders" class="table">
+			<thead>
+				<tr path="soubory.php?modul=<?=$_GET["modul"]?>&path=<?=$path?>">
+					<td class="<?=(($_SESSION["podle"]=="1")? (($_SESSION["smer"]%2==0)?"sort-asc":"sort-desc"):"")?>" colspan="2" sort="1">Název souboru</td>
+					<td class="<?=(($_SESSION["podle"]=="2")? (($_SESSION["smer"]%2==0)?"sort-num-down":"sort-num-up"):"")?>" sort="2">datum</td>
+					<td class="text-right <?=(($_SESSION["podle"]=="3")? (($_SESSION["smer"]%2==0)?"sort-num-down":"sort-num-up"):"")?>" sort="3">velikost</td>
+				</tr>
+			</thead>
+			<tbody>
+				<?php obsahAdr($modulPath,$path,"1",$_SESSION["podle"],$najit) ?>
+			</tbody>
+		</table>
+	</div>
+</div>
 <?php
-include "pata.php"; 
+include "pata.php";
 
 function obsahAdr($modulPath,$path,$smer,$podle,$najit="",$selekce="") {
 	global $icons, $Adresar, $AdresarCesta, $DatumAdresare, $Nazev, $Cesta, $DatumSouboru, $Velikost;
 	if (!isset($Adresar))
 		$Adresar = $AdresarCesta = $DatumAdresare = $Nazev = $Cesta = $DatumSouboru = $Velikost = array();
 
-    if (is_dir($modulPath.$path) && false!==($handle=opendir($modulPath.$path))) { 
-		while (false!==($file = readdir($handle))) { 
+    if (is_dir($modulPath.$path) && false!==($handle=opendir($modulPath.$path))) {
+		while (false!==($file = readdir($handle))) {
 		   if (povoleny($file,$modulPath.$path)) {
 				if (is_dir($modulPath.$path."/".$file)) {
 					if (!empty($najit))
@@ -117,7 +129,7 @@ function obsahAdr($modulPath,$path,$smer,$podle,$najit="",$selekce="") {
 				}
 			}
 		}
-		closedir($handle); 
+		closedir($handle);
 		if ($smer == "zpet")
 			return;
 		switch ($podle) {
@@ -148,19 +160,19 @@ function obsahAdr($modulPath,$path,$smer,$podle,$najit="",$selekce="") {
 			   echo "<img src=\"images/updir.png\" border=\"0\"></td>";
 			   echo "<td> ..</td><td></td><td align=\"right\"></td></tr>\n";
 		}
-		while (list ($key, $value) = each ($sortAdresar)) { 
-			if (strrpos(strrchr($path, "/"),"(dle strediska)")==false || empty($_SESSION["dleStrediska"]) || strpos($Adresar[$key],$_SESSION["dleStrediska"]) || strpos($Adresar[$key],"reditelstvi")) {		
+		foreach($sortAdresar as $key => $value) {
+			if (strrpos(strrchr($path, "/"),"(dle strediska)")==false || empty($_SESSION["dleStrediska"]) || strpos($Adresar[$key],$_SESSION["dleStrediska"]) || strpos($Adresar[$key],"reditelstvi")) {
 			    echo "<tr path=\"soubory.php?modul=".$_GET["modul"]."&path=".$AdresarCesta[$key]."\"><td><img src=\"images/dir.png\" border=\"0\"></td><td>";
 			    echo $Adresar[$key]."</td><td>".date("d.m.Y",strtotime($DatumAdresare[$key]))."</td><td align=\"right\"></td></tr>\n";
 			}
 		}
-		while (list ($key, $value) = each ($sortSoubor)) { 
-			if (strrpos(strrchr($path, "/"),"(dle strediska)")==false || empty($_SESSION["dleStrediska"]) || strpos($Nazev[$key],$_SESSION["dleStrediska"]) || strpos($Nazev[$key],"reditelstvi")) {		
-			    echo "<tr path=\"soubor.php?modul=".$_GET["modul"]."&path=".urlencode($Cesta[$key])."&file=".urlencode($Nazev[$key])."\"><td><img src=\"images/".$icons[strtolower(pathinfo($Nazev[$key], PATHINFO_EXTENSION))]."\" border=\"0\"></td><td>";
+		foreach($sortSoubor as $key => $value) {
+			if (strrpos(strrchr($path, "/"),"(dle strediska)")==false || empty($_SESSION["dleStrediska"]) || strpos($Nazev[$key],$_SESSION["dleStrediska"]) || strpos($Nazev[$key],"reditelstvi")) {
+			    echo "<tr path=\"soubor.php?modul=".$_GET["modul"]."&path=".urlencode($Cesta[$key])."&file=".urlencode($Nazev[$key])."\"><td><img src=\"images/".$icons[strtolower(pathinfo($Nazev[$key], PATHINFO_EXTENSION))]."\" border=\"0\"></td><td class='table-filename'>";
 			    echo $Nazev[$key]."</td><td>".date("d.m.Y",strtotime($DatumSouboru[$key]))."</td><td align=\"right\">".(round($Velikost[$key]/1000))." kB</td></tr>\n";
 			}
 		}
- 	} 
+ 	}
 }
 function najdi($co,$kde) {
 	$hledat = explode(" ", $co);
@@ -179,7 +191,7 @@ function povoleny($file,$dir) {
         return true;
 
 	$pripony = array("doc","dot","docx","xls","xlsx","xltx","ppt","pptx","jpg", "gif", "bmp", "tif", "png", "txt","pdf","htm","html","rar","zip","mov","avi","mp4","mts");
-	$extension = strtolower(pathinfo($file, PATHINFO_EXTENSION)); 
+	$extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
 	return (in_array($extension, $pripony));
 }
 
