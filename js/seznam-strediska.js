@@ -1,20 +1,5 @@
 
-
-// api
 let api = 'api/seznam-strediska/'
-let order = 'nazev'
-let orderDirection = 'asc'
-
-function getRows() {
-  fetch(
-    api + 'get.php' +
-    '?search=' + search.value +
-    '&order=' + order +
-    '&order-direction=' + orderDirection
-  )
-  .then(r => r.json())
-  .then(r => displayRows(r))
-}
 
 // dom manipulation
 function rowElementBase(obj){ 
@@ -78,3 +63,5 @@ function deformatRowEdit(row){
   row.contentEditable = false
   return row
 }
+
+setupTable(api, null, rowElementBase, getObjectFromRow, fillRowWithObject, formatRowEdit, deformatRowEdit)

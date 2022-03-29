@@ -8,6 +8,5 @@ if (!clearance()) {
 }
 
 function clearance(){
-  // return str_contains($_SESSION['prava'], 'T');
-  return true;
+  return str_contains($_SESSION['prava'], 'M');
 }

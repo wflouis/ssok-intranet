@@ -6,13 +6,17 @@
 		Header("Location: index.php");
 		exit;
 	}
-	
-	$stmt = mysqli_prepare($link, "SELECT * FROM menu_moduly
-	JOIN pristprava on pristprava.id_modulu = menu_moduly.id_modulu
-	WHERE pristprava.id_modulu = ? and pristprava.id_jmeno = ?
+
+	$stmt = mysqli_prepare($link, "SELECT menu_moduly.popis FROM menu_moduly
+	LEFT JOIN pristprava on pristprava.id_modulu = menu_moduly.modul
+	where (pristprava.id_jmeno = {$_SESSION['id_jmeno']} or menu_moduly.modul = 0)
+		and menu_moduly.id_modulu = ?
+	ORDER BY poradi ASC
 	");
-	$stmt->bind_param('ii', $_GET['modul'], $_SESSION['id_jmeno']);
+	echo mysqli_error($link);
+	$stmt->bind_param('i', $_GET['modul']);
 	$stmt->execute();
+	echo $stmt->error;
 	$result = $stmt->get_result();
 
 	if ($radek = mysqli_fetch_assoc($result)) {

@@ -17,6 +17,7 @@ where stredisko like ?
   and lower(jmeno) like lower(?)
 order by $order $orderDirection
 ");
+echo mysqli_error($link);
 $stmt->bind_param('ss', $stredisko, $search);
 $stmt->execute();
 $result = $stmt->get_result();

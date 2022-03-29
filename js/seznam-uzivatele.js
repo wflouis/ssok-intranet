@@ -3,15 +3,11 @@ let select = document.getElementById('select')
 select.onchange = getRows
 select.value = '%'
 
-//api
-let order = 'jmeno'
-let orderDirection = 'asc'
-
 let api = 'api/seznam-uzivatele/'
 
-function getRows() {
+function getRows(order, orderDirection) {
   let stredisko = select.value
-  fetch(
+  return fetch(
     api + 'get.php' +
     '?stredisko=' + stredisko +
     '&search=' + search.value +
@@ -19,7 +15,6 @@ function getRows() {
     '&order-direction=' + orderDirection
   )
   .then(r => r.json())
-  .then(r => displayRows(r))
 }
 
 // dom manipulation
@@ -33,20 +28,6 @@ function rowElementBase(user){
   <td name="internet" contenteditable='false'>${user['internet'] ?? ''}</td>
   <td name="opravneni" contenteditable='false' style='white-space:nowrap'>${user['opravneni'] ?? ''}</td>
 `
-}
-function getObjectFromRow(row){
-  let elValues = row.querySelectorAll('[name]')
-  let obj = {}
-  elValues.forEach(e => {
-    obj[e.getAttribute('name')] = e.innerText.trim()
-  })
-  return obj
-}
-function fillRowWithObject(row, obj){
-  let elValues = row.querySelectorAll('[name]')
-  for(let el of elValues){
-    el.innerText = obj[el.getAttribute('name')]
-  }
 }
 
 // edit format
@@ -123,3 +104,5 @@ function deformatRowEdit(row){
 
   return row
 }
+
+setupTable(api, getRows, rowElementBase, null, null, formatRowEdit, deformatRowEdit)

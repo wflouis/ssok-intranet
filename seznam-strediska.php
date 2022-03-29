@@ -6,8 +6,8 @@
 ?>
 
 <div>
-	<script src='js/seznam-strediska.js' defer></script>
 	<script src='js/seznam.js' defer></script>
+	<script src='js/seznam-strediska.js' defer></script>
 
 	<h2>Seznam středisek</h2>
 	<div class="obsah">
@@ -21,7 +21,7 @@
 		<div class="gap"></div>
 		<table id='strediska' class="table">
 			<thead>
-				<tr path="soubory.php?modul=<?=$_GET["modul"]?>&path=<?=$path?>">
+				<tr>
 					<td column="zkratka">Zkratka</td>
 					<td column="nazev">Název</td>
 					<td column="ostatni" nosort>Ostatní</td>

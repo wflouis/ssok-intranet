@@ -1,7 +1,7 @@
 
 <?php
 
-require 'base.php';
+require '../base.php';
 
 if (!clearance()) {
   http_response_code(403);
@@ -9,7 +9,7 @@ if (!clearance()) {
 }
 
 function clearance(){
-  return str_contains($_SESSION['prava'], 'L');
+  return str_contains($_SESSION['prava'], 'U');
 }
 
 function postOpravneni($userId, $opravneniStr){

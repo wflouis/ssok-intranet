@@ -23,6 +23,8 @@
 	}
 
 	.header-menu{
+		height: calc(100vh - var(--headerHeight));
+		
 		display:flex;
 		padding-left:var(--pagePadding);
 		margin-left:calc(-1 * var(--pagePadding))
@@ -43,6 +45,7 @@
 	}
 	.menu{
 		position:fixed;
+		background-color:rgba(3, 54, 74, 0.9);
 
 		top:var(--headerHeight);
 		left:0;
