@@ -7,12 +7,12 @@
 
 <div>
 	<script src='js/seznam.js' defer></script>
-	<script src='js/seznam-strediska.js' defer></script>
+	<script src='js/strediska.js' defer></script>
 
 	<h2>Seznam středisek</h2>
 	<div class="obsah">
     <div class='flex flex-center-v'>
-      <input id="search" class="txt txt-width">
+      <input id="search" class="txt ">
       <!-- <button id='search-btn' class='btn btn-width'><i class='fa fa-search'></i></button> -->
       <div class='gap'></div>
       <a id='new-button'>Nové středisko</a>

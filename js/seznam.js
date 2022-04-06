@@ -1,16 +1,29 @@
 
+Object.prototype.clearCh = function() {
+  while(this.firstChild) this.firstChild.remove()
+  return this
+}
 
-function setupTable(api, getRows, rowElementBase, getObjectFromRow, fillRowWithObject, formatRowEdit, deformatRowEdit){
-  function getRowsDefault(order, orderDirection) {
+class MTable {
+  getRowsDefault(order, orderDirection) {
     return fetch(
-      api + 'get.php' +
-      '?search=' + search.value +
+      this.api + 'get.php' +
+      '?search=' + (this.search ? this.search.value : '') +
       '&order=' + order +
       '&order-direction=' + orderDirection
     )
     .then(r => r.json())
   }
-  function getObjectFromRowDefault(row){
+
+  fetchColumns(row){
+    let elValues = row.querySelectorAll('[name]')
+    let obj = {}
+    elValues.forEach(e => {
+      obj[e.getAttribute('name')] = e
+    })
+    return obj
+  }
+  getObjectFromRowDefault(row){
     let elValues = row.querySelectorAll('[name]')
     let obj = {}
     elValues.forEach(e => {
@@ -18,78 +31,131 @@ function setupTable(api, getRows, rowElementBase, getObjectFromRow, fillRowWithO
     })
     return obj
   }
-  function fillRowWithObjectDefault(row, obj){
+  fillRowWithObjectDefault(row, obj){
     let elValues = row.querySelectorAll('[name]')
     for(let el of elValues){
       el.innerText = obj[el.getAttribute('name')]
     }
   }
-  if(!getRows) getRows = getRowsDefault
-  if(!getObjectFromRow) getObjectFromRow = getObjectFromRowDefault
-  if(!fillRowWithObject) fillRowWithObject = fillRowWithObjectDefault
+  formatRowEditDefault(row) {
+    row.contentEditable = true
+    return row
+  }
+  deformatRowEditDefault(row){
+    row.contentEditable = false
+    return row
+  }
 
-  let search = document.getElementById('search')
-  let table = document.getElementById('table-body')
-  let btnCreateUser = document.getElementById('new-button')
+  constructor(api, getRows, rowElementBase, getObjectFromRow, fillRowWithObject, formatRowEdit, deformatRowEdit){
+    this.api = api;
+    
+    if(!getRows) getRows = this.getRowsDefault
+    if(!getObjectFromRow) getObjectFromRow = this.getObjectFromRowDefault
+    if(!fillRowWithObject) fillRowWithObject = this.fillRowWithObjectDefault
+    if(!formatRowEdit) formatRowEdit = this.formatRowEditDefault
+    if(!deformatRowEdit) deformatRowEdit = this.deformatRowEditDefault
+    this.getRows = getRows
+    this.getObjectFromRow = getObjectFromRow
+    this.fillRowWithObject = fillRowWithObject
+    this.rowElementBase = rowElementBase
+    this.formatRowEdit = formatRowEdit
+    this.deformatRowEdit = deformatRowEdit
 
-  let errorMessage = 'Akce se nezdařila.'
-  function alertError(r, code){
+    this.search = document.getElementById('search')
+    this.table = document.getElementById('table-body')
+    this.errorMessage = 'Akce se nezdařila.'
+    
+    let btnCreateUser = document.getElementById('new-button')
+    if(btnCreateUser){
+      let displayCreateUser = () => {
+        let row = this.rowElement({})
+        row.classList.add('create')
+        this.formatRowEdit(row)
+        
+        this.table.prepend(row)
+      }
+
+      btnCreateUser.onclick = displayCreateUser
+    }
+
+    // sort
+    let columns = document.querySelectorAll('thead td:not([nosort])')
+    let sortTimeoutId = 0
+    columns.forEach(c => {
+      c.onclick = () => {
+        let sort = c.classList.contains('sort-asc') ? 'desc' : 'asc'
+
+        columns.forEach(c => c.className='')
+        c.classList.add('sort-' + sort)
+        
+        let order = c.getAttribute('column')
+        this.order = order
+        this.orderDir = sort
+
+        clearTimeout(sortTimeoutId)
+        sortTimeoutId = setTimeout(this.getRowsDisplay, sortTimeoutId == 0 ? 0 : 500)
+      }
+    })
+    this.columns = columns
+    columns[0].click()
+
+    if(this.search){
+      let searchTimeoutId = 0
+      search.oninput = () => {
+        clearTimeout(searchTimeoutId)
+        searchTimeoutId = setTimeout(this.getRowsDisplay, 500)
+      }
+    }
+  }
+  
+  alertError(r, code){
     // alert(errorMessage + ' Kód chyby: ' + code)
     r.text().then(
-      t => alert(errorMessage + ' ' + t)
+      t => alert(this.errorMessage + ' ' + t)
     )
   }
 
-  Object.prototype.clearCh = function() {
-    while(this.firstChild) this.firstChild.remove()
-    return this
+  getRowsDisplay = () => {
+    this.getRows(this.order,this.orderDir).then(this.displayRows)
   }
 
-  let order
-  let orderDir
-  function getRowsDisplay(o, d){
-    if(o) order = o
-    if(d) orderDir = d
-    getRows(order,orderDir).then(displayRows)
-  }
-
-  function rowElement(obj){
+  rowElement(obj){
     let tr = document.createElement('tr')
     tr.innerHTML = rowElementBase(obj) + `
     <td class='action-default' contenteditable='false'>
-      <a>Upravit</a> <a>Smazat</a>
+      <a>Upravit</a><br><a>Smazat</a>
     </td>
     <td class='action-edit' contenteditable='false'>
-      <a>Uložit</a> <a>Zrušit</a>
+      <a>Uložit</a><br><a>Zrušit</a>
     </td>
     <td class='action-create' contenteditable='false'>
-      <a>Uložit</a> <a>Zrušit</a>
+      <a>Uložit</a><br><a>Zrušit</a>
     </td>`
 
-    let actionsDefault = tr.querySelector('.action-default')
-    actionsDefault.children[0].onclick = (e) => displayEdit(e.target.parentNode.parentNode)
-    actionsDefault.children[1].onclick = (e) => displayDelete(obj['id'], obj['name'], e.target.parentNode.parentNode)
-    let actionsEdit = tr.querySelector('.action-edit')
-    actionsEdit.children[0].onclick = (e) => saveEdit(obj['id'], e.target.parentNode.parentNode)
-    actionsEdit.children[1].onclick = (e) => discardEdit(e.target.parentNode.parentNode)
-    let actionsCreate = tr.querySelector('.action-create')
-    actionsCreate.children[0].onclick = (e) => saveCreate(e.target.parentNode.parentNode)
-    actionsCreate.children[1].onclick = (e) => discardCreate(e.target.parentNode.parentNode)
+    let actionsDefault = tr.querySelectorAll('.action-default a')
+    actionsDefault[0].onclick = (e) => this.displayEdit(e.target.parentNode.parentNode)
+    actionsDefault[1].onclick = (e) => this.displayDelete(obj['id'], obj['name'], e.target.parentNode.parentNode)
+    let actionsEdit = tr.querySelectorAll('.action-edit a')
+    actionsEdit[0].onclick = (e) => this.saveEdit(obj['id'], e.target.parentNode.parentNode)
+    actionsEdit[1].onclick = (e) => this.discardEdit(e.target.parentNode.parentNode)
+    let actionsCreate = tr.querySelectorAll('.action-create a')
+    actionsCreate[0].onclick = (e) => this.saveCreate(e.target.parentNode.parentNode)
+    actionsCreate[1].onclick = (e) => this.discardCreate(e.target.parentNode.parentNode)
 
     return tr
   }
 
   //api
-  function apiDelete(id, cb){
+  apiDelete(id, cb){
     fetch(api + 'delete.php?id=' + id)
     .then(r => {
       if(r.status == 200) {
         cb()
       }
-      else alertError(r, 'delete')
+      else this.alertError(r, 'delete')
     })
   }
-  function apiPost(obj, cb, cbError){
+  apiPost(obj, cb, cbError){
     fetch(api + 'post.php', {
       method:'post',
       body:JSON.stringify(obj)
@@ -97,15 +163,19 @@ function setupTable(api, getRows, rowElementBase, getObjectFromRow, fillRowWithO
     .then(r => {
       if(r.status == 200) {
         cb()
-        alert('"'+ (obj['jmeno'] ?? obj['nazev']) +'" byl vytvořen')
+        let name = 'Záznam'
+        if(obj['jmeno']) name = `"${obj['jmeno']}"`
+        if(obj['nazev']) name = `"${obj['nazev']}"`
+        
+        alert(name + ' byl vytvořen')
       }
       else {
-        cbError()
+        if(cbError) cbError()
         alertError(r, 'post')
       }
     })
   }
-  function apiPostEdit(obj, cb, cbError){
+  apiPostEdit(obj, cb, cbError){
     fetch(api + 'edit.php', {
       method:'post',
       body:JSON.stringify(obj)
@@ -116,78 +186,48 @@ function setupTable(api, getRows, rowElementBase, getObjectFromRow, fillRowWithO
       }
       else {
         cbError()
-        alertError(r, 'edit')
+        this.alertError(r, 'edit')
       }
     })
   }
 
   // modification
-  if(btnCreateUser){
-    btnCreateUser.onclick = displayCreateUser
-    function displayCreateUser(){
-      let row = rowElement({})
-      row.classList.add('create')
-      formatRowEdit(row)
-
-      table.prepend(row)
-    }
+  saveCreate(row){
+    this.apiPost(this.getObjectFromRow(this.deformatRowEdit(row)), this.getRowsDisplay, () => this.formatRowEdit(row))
   }
-
-  function saveCreate(row){
-    apiPost(getObjectFromRow(deformatRowEdit(row)), getRowsDisplay, () => formatRowEdit(row))
-  }
-  function discardCreate(row){
+  discardCreate(row){
     row.remove()
   }
-  function displayDelete(id, name, row){
+  displayDelete(id, name, row){
     if(window.confirm('Smazat "' + name + '"')){
-      apiDelete(id, () => row.remove())
+      this.apiDelete(id, () => row.remove())
     }
   }
-  function displayEdit(row){
+  displayEdit(row){
     row.classList.add('edit')
-    row.setAttribute('oldobj', JSON.stringify(getObjectFromRow(row)))
-    formatRowEdit(row)
+    row.oldobj = this.getObjectFromRow(row)
+    this.formatRowEdit(row)
   }
-  function saveEdit(id, row){
+  saveEdit(id, row){
     row.classList.remove('edit')
-    let obj = getObjectFromRow(deformatRowEdit(row))
+    let obj = this.getObjectFromRow(this.deformatRowEdit(row))
     obj['id'] = id
-    apiPostEdit(obj, () => {}, () => formatRowEdit(row))
+    this.apiPostEdit(obj, () => {}, () => this.formatRowEdit(row))
   }
-  function discardEdit(row){
+  discardEdit(row){
     row.classList.remove('edit')
-    let oldobj = JSON.parse(row.getAttribute('oldobj'))
-    deformatRowEdit(row)
-    fillRowWithObject(row, oldobj)
+    this.deformatRowEdit(row)
+    this.fillRowWithObject(row, row.oldobj)
   }
 
   // display
-  function displayRows(objs){
-    table.clearCh()
+  displayRows = (objs) => {
+    this.table.clearCh()
     for(let obj of objs){
-      table.appendChild(rowElement(obj))
+      let tr = this.rowElement(obj)
+      this.table.appendChild(tr)
+
+      if(this.rowCallback) this.rowCallback(tr, obj)
     }
-  }
-
-  // sort
-  let columns = document.querySelectorAll('thead td:not([nosort])')
-  columns.forEach(c => {
-    c.onclick = () => {
-      let sort = c.classList.contains('sort-asc') ? 'desc' : 'asc'
-
-      columns.forEach(c => c.className='')
-      c.classList.add('sort-' + sort)
-      
-      let order = c.getAttribute('column')
-      getRowsDisplay(order, sort)
-    }
-  })
-  columns[0].click()
-
-  let searchTimeoutId = 0
-  search.oninput = () => {
-    clearTimeout(searchTimeoutId)
-    searchTimeoutId = setTimeout(getRowsDisplay, 0)
   }
 }

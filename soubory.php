@@ -84,7 +84,7 @@
 			<input name="modul" type="hidden" value="<?=$_GET["modul"]?>">
 			<input name="path" type="hidden" value="<?=$path?>">
 			<div class='flex'>
-				<input class='txt txt-width' name="najit" type="text" placeholder="Hledaný text ...">
+				<input class='txt ' name="najit" type="text" placeholder="Hledaný text ...">
 				<button class='btn btn-width'><i class='fa fa-search'></i></button>
 			</div>
 			<div class='gap'></div>

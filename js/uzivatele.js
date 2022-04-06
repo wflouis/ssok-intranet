@@ -1,9 +1,7 @@
 
-let select = document.getElementById('select')
-select.onchange = getRows
-select.value = '%'
+let api = 'api/uzivatele/'
 
-let api = 'api/seznam-uzivatele/'
+let select = document.getElementById('select')
 
 function getRows(order, orderDirection) {
   let stredisko = select.value
@@ -46,7 +44,7 @@ function formatRowEdit(row){
 
   let strediskoStr = strediskoE.innerText.trim() == '' ? '%' : strediskoE.innerText.trim()
   let strediskoF = document.createElement('select')
-  fetch(api + 'get-strediska.php')
+  fetch('api/strediska/get-basic.php')
   .then(r => {
     if(r.status != 200) alertError(r, 'edit-get-strediska')
     return r.json()
@@ -105,4 +103,7 @@ function deformatRowEdit(row){
   return row
 }
 
-setupTable(api, getRows, rowElementBase, null, null, formatRowEdit, deformatRowEdit)
+select.value = '%'
+let table = new MTable(api, getRows, rowElementBase, null, null, formatRowEdit, deformatRowEdit)
+
+select.onchange = table.getRowsDisplay

@@ -1,5 +1,5 @@
 
-let api = 'api/seznam-strediska/'
+let api = 'api/strediska/'
 
 // dom manipulation
 function rowElementBase(obj){ 
@@ -64,4 +64,4 @@ function deformatRowEdit(row){
   return row
 }
 
-setupTable(api, null, rowElementBase, getObjectFromRow, fillRowWithObject, formatRowEdit, deformatRowEdit)
+let table = new MTable(api, null, rowElementBase, getObjectFromRow, fillRowWithObject, formatRowEdit, deformatRowEdit)

@@ -1,8 +1,8 @@
 <?php
 require 'base-read.php';
 
-$stredisko = $_GET['stredisko'];
-$search = '%' . $_GET['search'] . '%';
+$stredisko = isset($_GET['stredisko']) ? $_GET['stredisko'] : '';
+$search = isset($_GET['search']) ? ('%' . $_GET['search'] . '%') : '%';
 $order = empty($_GET['order']) ? 'jmeno' : $_GET['order'];
 $orderDirection = empty($_GET['order-direction']) ? 'desc' : $_GET['order-direction'];
 
@@ -25,4 +25,4 @@ echo $stmt->error;
 
 $users = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-echo json_encode($users, JSON_PRETTY_PRINT);
+echo json_encode($users);

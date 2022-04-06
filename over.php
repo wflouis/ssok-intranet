@@ -88,8 +88,4 @@ function vratIP() {
      }
      return '';
 }
-
-function loggedIn(){
-	return isset($_SESSION["uzivatel"]);
-}
 ?>

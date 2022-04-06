@@ -14,7 +14,7 @@ internet = ?
 
 where id_jmeno = ?
 ");
-$stmt->bind_param('ssssssi', $user['jmeno'], $user['funkce'], $user['telefon'], $user['email'], $user['stredisko'], $user['internet'], $user['id_jmeno']);
+$stmt->bind_param('ssssssi', $user['jmeno'], $user['funkce'], $user['telefon'], $user['email'], $user['stredisko'], $user['internet'], $user['id']);
 
 postOpravneni($user['id'], $user['opravneni']);
 
