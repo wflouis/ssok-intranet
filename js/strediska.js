@@ -5,7 +5,7 @@ let api = 'api/strediska/'
 function rowElementBase(obj){ 
   return `
   <td name="zkratka">${obj['zkratka'] ?? ''}</td>
-  <td name="nazev">${obj['name'] ?? ''}</td>
+  <td name="nazev">${obj['nazev'] ?? ''}</td>
   <td name="ostatni">${stringifyOstatni(obj['ostatni'])}</td>
 `
 }
@@ -37,31 +37,13 @@ function stringifyOstatni(ostatni){
   }
   return ostatniStr
 }
-function getObjectFromRow(row){
-  let elValues = row.querySelectorAll('[name]')
-  let obj = {}
-  elValues.forEach(e => {
-    let attr = e.getAttribute('name')
-    obj[attr] = (attr == 'ostatni' ? parseOstatni(e.innerText) : e.innerText.trim())
-  })
-  return obj
-}
-function fillRowWithObject(row, obj){
-  obj['ostatni'] = stringifyOstatni(obj['ostatni'])
-  let elValues = row.querySelectorAll('[name]')
-  for(let el of elValues){
-    el.innerText = obj[el.getAttribute('name')]
-  }
-}
 
-// edit format
-function formatRowEdit(row) {
-  row.contentEditable = true
-  return row
-}
-function deformatRowEdit(row){
-  row.contentEditable = false
+function deformatRowEdit(row, cols){
+  row.obj['ostatni'] = parseOstatni(cols['ostatni'].innerText)
+
   return row
 }
 
-let table = new MTable(api, null, rowElementBase, getObjectFromRow, fillRowWithObject, formatRowEdit, deformatRowEdit)
+let table = new MTable(api)
+table.rowElementBase = rowElementBase
+table.deformatRowEdit = deformatRowEdit

@@ -28,31 +28,14 @@ $orderDirection = empty($_GET['order-direction']) ? 'asc' : $_GET['order-directi
 
 $stmt = mysqli_prepare($link, "SELECT
     smlouvy.id_smlouvy as id, smlouvy.cisloSmlouvy, typysmluv.popis, smlouvy.datumUzavreni, smlouvy.predmet, smlouvy.cena, smlouvy.velikost,
-    (
-        select GROUP_CONCAT(seznam_str.zkratka SEPARATOR '\n')
-        from smlouvystr
-        join seznam_str on seznam_str.id_str = smlouvystr.id_strediska
-        where smlouvystr.id_smlouvy = smlouvy.id_smlouvy
-    ) as strediska,
-    (
-        select group_concat(partneri.nazev separator '\n')
-        from smlouvypartneri
-        join partneri on partneri.id_partnera = smlouvypartneri.idPartnera
-        where smlouvypartneri.id_smlouvy = smlouvy.id_smlouvy
-    ) as partneri,
     rodneCislo, datumOd, datumDo, concat(faktura, '\nuhrazeno:\n', uhrazeno) as faktura,
     (
-        select group_concat(concat(nazev, ' ', velikost) separator '\n')
-        from smlouvyprilohy
-        where smlouvyprilohy.id_smlouvy = smlouvy.id_smlouvy
-    ) as prilohy,
-    (
         select group_concat(concat(predmetZaruky, '\nod: ', datumZarukyOd, '\ndo: ', datumZarukyDo, '\n\n',
-        (
+        coalesce((
             select group_concat(concat(datumKontroly, ' ', vysledekKontroly, '\nodstranění: ', datumOdstraneni) separator '\n\n')
             from kontroly
             where id_smlouvy = smlouvy.id_smlouvy and id_zaruky = zaruky.id_zaruky
-        )
+        ), 'bez kontrol')
         ) separator '\n<hr>\n')
         from zaruky
         where id_smlouvy = smlouvy.id_smlouvy
@@ -82,4 +65,30 @@ $stmt->execute();
 $result = $stmt->get_result();
 echo $stmt->error;
 
-echo json_encode(mysqli_fetch_all($result, MYSQLI_ASSOC));
+$rows = [];
+while($row = mysqli_fetch_assoc($result)){
+    $row['strediska'] = mysqli_fetch_all(mysqli_query($link, "SELECT
+        seznam_str.id_str as id, seznam_str.zkratka
+        from smlouvystr
+        join seznam_str on seznam_str.id_str = smlouvystr.id_strediska
+        where smlouvystr.id_smlouvy = {$row['id']}
+    "), MYSQLI_ASSOC);
+
+    $row['partneri'] = mysqli_fetch_all(mysqli_query($link, "SELECT
+        partneri.id_partnera as id, partneri.nazev
+        from smlouvypartneri
+        join partneri on partneri.id_partnera = smlouvypartneri.idPartnera
+        where smlouvypartneri.id_smlouvy = {$row['id']}
+    "), MYSQLI_ASSOC);
+
+    $row['prilohy'] = mysqli_fetch_all(mysqli_query($link, "SELECT
+    nazev, velikost
+    from smlouvyprilohy
+    where smlouvyprilohy.id_smlouvy = {$row['id']}
+    "), MYSQLI_ASSOC);
+
+    $rows[] = $row;
+}
+
+
+echo json_encode($rows);

@@ -211,21 +211,38 @@ label {
 	/* color: var(--primaryColor); */
 	/* color: #23a1d1; */
 }
+
+.txt, select, input[type=date]{
+	display:block;
+
+	padding:10px;
+	margin:5px 0;
+	box-sizing: border-box;
+
+	max-width:100%;
+	white-space: normal;
+
+	border-radius: 5px;
+	border: 1px solid gray;
+}
+input[type=file]{
+	pointer-events:none;
+}
+.button:hover{
+	cursor:pointer;
+	user-select: none;
+}
+.select-selected{
+	overflow:auto;
+}
 .txt{
-  display:block;
-  width:200px;
-  font-size: 12px;
-
-  box-sizing: border-box;
-  padding:10px 13px;
-  margin:5px 0;
-
-  border-radius:5px;
-  border:1px solid gray;
+	width:200px;
+	padding:10px 13px;
 }
 .txt-max-width{
 	width:100%;
 }
+
 .btn, button {
 	padding: 7.5px 12px;
     margin:5px;
@@ -377,11 +394,6 @@ td{
   white-space: nowrap;
 }
 
-.select-menu{
-	padding:5px;
-	max-width:100%;
-}
-
 #strediska td[name='ostatni']{
 	white-space:break-spaces;
 }
@@ -397,6 +409,9 @@ td{
 .td-maxwidth{
 	max-width:200px;
 	overflow:hidden;
+}
+.scroll-x{
+	overflow-x:auto
 }
 .td-newline{
 	white-space:pre;
@@ -431,14 +446,13 @@ td{
 	display:none;
 }
 .zaruky-content{
-	z-index: 1;
-
-	position:absolute;
+	position:static;
 	top:30px;
 	left:0;
 	right:0;
 
 	padding:20px;
+	margin-bottom:10px;
 
 	background-color:var(--graySolid);
 

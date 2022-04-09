@@ -11,16 +11,16 @@ function clearance(){
   return str_contains($_SESSION['prava'], 'U');
 }
 
-function postOstatni($zkratka, $ostatni){
+function postOstatni($idstr, $ostatni){
   global $link;
 
-  $stmt = mysqli_prepare($link, "delete from strediska where stredisko = ?");
-  $stmt->bind_param('s', $zkratka);
+  $stmt = mysqli_prepare($link, "delete from strediska where id_str = ?");
+  $stmt->bind_param('s', $idstr);
   $stmt->execute();
 
   foreach($ostatni as $o) {
     $stmt = mysqli_prepare($link, "insert into strediska values (?,?,?)");
-    $stmt->bind_param('sss', $o['nadpis'], $o['text'], $zkratka);
+    $stmt->bind_param('sss', $o['nadpis'], $o['text'], $idstr);
     if(!$stmt->execute()){
       http_response_code(500);
       die('Chyba post ostatni');

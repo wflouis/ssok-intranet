@@ -6,7 +6,7 @@ $order = empty($_GET['order']) ? 'nazev' : $_GET['order'];
 $orderDirection = empty($_GET['order-direction']) ? 'desc' : $_GET['order-direction'];
 
 $stmt = mysqli_prepare($link, "
-select id_str as id, zkratka, nazev as name
+select id_str as id, zkratka, nazev
 from seznam_str
 where lower(nazev) like lower(?)
 order by $order $orderDirection
@@ -19,7 +19,7 @@ echo $stmt->error;
 
 $rows = [];
 while($row = mysqli_fetch_assoc($result)){
-  $other = mysqli_fetch_all(mysqli_query($link, "select nadpis, text from strediska where stredisko = '{$row['zkratka']}'"), MYSQLI_ASSOC);
+  $other = mysqli_fetch_all(mysqli_query($link, "select nadpis, text from strediska where id_str = '{$row['id']}'"), MYSQLI_ASSOC);
 
   $row['ostatni'] = $other;
   $rows[] = $row;

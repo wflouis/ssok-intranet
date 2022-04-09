@@ -20,10 +20,8 @@ function rowElementBase(obj){
 `
 }
 
-function formatRowEdit(row){
-  row.contentEditable = true
-
-  let mail = row.querySelector('[name=mail]')
+function formatRowEdit(row, cols){
+  let mail = cols['mail']
   mail.innerHTML = `
   <div id='mail-selected'></div>
   <select id='mail-select' class='txt'>
@@ -55,35 +53,34 @@ function formatRowEdit(row){
     }
   })
 
-  row.usersMails = []
-  row.strediskaMails = []
+  row.obj['usersMails'] = []
+  row.obj['strediskaMails'] = []
   mailSelect.onchange = () => {
     let option = mailSelect.options[mailSelect.selectedIndex]
     let type = option.getAttribute('type')
     let text = option.text
 
     if(type == 'u') {
-      row.usersMails.push(option.value)
+      row.obj['usersMails'].push(option.value)
       text = option.getAttribute('email')
       if(text.trim() == '') {
         alert('E-mail uživatele "' + option.text + '" je prázdný')
         return
       }
     }
-    else if(type == 's') row.strediskaMails.push(option.value)
+    else if(type == 's') row.obj['strediskaMails'].push(option.value)
     else return
 
     let mail = document.createElement('div')
     mail.classList.add('flex')
     mail.innerHTML = `
-    <${type}-id hidden>${option.value}</${type}-id>
     ${text}
     <div class='sgap gap-stretch-h'></div>
     <a>Smazat</a>
     `
     mail.querySelector('a').onclick = () => {
-      let arr = row.usersMails
-      if(type == 's') arr = row.strediskaMails
+      let arr = row.obj['usersMails']
+      if(type == 's') arr = row.obj['strediskaMails']
       
       arr.splice(arr.indexOf(option.value), 1);
       mail.remove()
@@ -95,35 +92,20 @@ function formatRowEdit(row){
 
   return row
 }
-function deformatRowEdit(row){
-  row.contentEditable = false
-  
+function deformatRowEdit(row, cols, save){
   let mail = row.querySelector('[name=mail]')
   mail.clearCh()
 
-  if((row.usersMails && row.usersMails.length != 0) || (row.strediskaMails && row.strediskaMails.length != 0)){
-    alert('Zpráva byla odeslána na vybrané e-maily')
+  if(save && ((row.obj['usersMails'] && row.obj['usersMails'].length != 0) || (row.obj['strediskaMails'] && row.obj['strediskaMails'].length != 0))){
+    alert('Zpráva bude odeslána na vybrané e-maily')
   }
 
   return row
 }
 
-function getObjectFromRow(row){
-  let elValues = row.querySelectorAll('[name]')
-  let obj = {}
-  elValues.forEach(e => {
-    let attr = e.getAttribute('name')
+let table = new MTable(api, ['mail'])
 
-    if(attr == 'mail'){
-      obj['usersMails'] = row.usersMails ?? []
-      obj['strediskaMails'] = row.strediskaMails ?? []
-    }
-    else{
-      obj[attr] = e.innerText.trim()
-    }
-  })
-
-  return obj
-}
-
-let table = new MTable(api, getRows, rowElementBase, getObjectFromRow, null, formatRowEdit, deformatRowEdit)
+table.getRows = getRows
+table.rowElementBase = rowElementBase
+table.formatRowEdit = formatRowEdit
+table.deformatRowEdit = deformatRowEdit

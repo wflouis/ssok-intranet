@@ -7,7 +7,7 @@ $order = empty($_GET['order']) ? 'jmeno' : $_GET['order'];
 $orderDirection = empty($_GET['order-direction']) ? 'desc' : $_GET['order-direction'];
 
 $stmt = mysqli_prepare($link, "
-select id_jmeno as id, jmeno as name, funkce, email, telefon, stredisko, internet,
+select id_jmeno as id, jmeno, funkce, email, telefon, stredisko, internet,
   (select group_concat(moduly.zkratka separator '')
   from pristprava
   join moduly on moduly.id_modulu = pristprava.id_modulu

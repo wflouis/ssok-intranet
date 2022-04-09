@@ -1,8 +1,6 @@
 <?php
 require 'base-write.php';
 
-$obj = json_decode(file_get_contents("php://input"), true);
-
 $stmt = mysqli_prepare($link, "
 insert into partneri (nazev, ico, mesto, ulice, psc, osoba, kadresa, telefon, email) 
 values (?,?,?,?,?,?,?,?,?)

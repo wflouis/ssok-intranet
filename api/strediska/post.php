@@ -1,7 +1,7 @@
 <?php
 require 'base-write.php';
 
-$obj = json_decode(file_get_contents("php://input"), true);
+
 
 $stmt = mysqli_prepare($link, "
 insert into seznam_str (zkratka,nazev)
@@ -11,7 +11,7 @@ $stmt->bind_param('ss', $obj['zkratka'], $obj['nazev']);
 echo $stmt->error;
 
 if($stmt->execute()) {
-    postOstatni($obj['zkratka'], $obj['ostatni']);
+    postOstatni($stmt->insert_id, $obj['ostatni']);
 
     http_response_code(200);
 }

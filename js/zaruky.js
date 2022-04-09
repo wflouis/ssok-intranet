@@ -43,15 +43,19 @@ function deformatRowEdit(row){
 }
 
 selectStredisko.value = '%'
-let table = new MTable(api, getRows, rowElementBase, null, null, formatRowEdit, deformatRowEdit)
+let table = new MTable(api)
+table.getRows = getRows
+table.rowElementBase = rowElementBase
+table.formatRowEdit = formatRowEdit
+table.deformatRowEdit = deformatRowEdit
 
 selectStredisko.onchange = table.getRowsDisplay
 selectZadavatel.onchange = table.getRowsDisplay
 inputOd.onchange = table.getRowsDisplay
 inputDo.onchange = table.getRowsDisplay
 
-table.rowCallback((tr, obj) => {
+table.rowCallback = (tr, obj) => {
   tr.onclick = () => {
-    window.location = './smlouvy.php?cislo=' + obj['cisloSmlouvy']
+    window.location = './smlouvy.php?search=' + obj['cisloSmlouvy']
   }
-})
+}

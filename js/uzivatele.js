@@ -18,7 +18,7 @@ function getRows(order, orderDirection) {
 // dom manipulation
 function rowElementBase(user){
   return `
-  <td name="jmeno">${user['name'] ?? ''}</td>
+  <td name="jmeno">${user['jmeno'] ?? ''}</td>
   <td name="funkce">${user['funkce'] ?? ''}</td>
   <td name="telefon" style='white-space:nowrap'>${user['telefon'] ?? ''}</td>
   <td name="email">${user['email'] ?? ''}</td>
@@ -29,20 +29,19 @@ function rowElementBase(user){
 }
 
 // edit format
-function formatRowEdit(row){
-  row.contentEditable = true;
-
-  let strediskoE = row.querySelector('[name=stredisko]')
-  let internetE = row.querySelector('[name=internet]')
-  let opravneniE = row.querySelector('[name=opravneni]')
-
+function formatRowEdit(row, cols){
   let internetF = document.createElement('input')
   internetF.type = 'checkbox'
-  internetF.checked = internetE.innerHTML == 1
 
-  internetE.clearCh().appendChild(internetF)
+  internetF.checked = row.obj['internet'] == 1
+  row.obj['internet'] = internetF.checked ? 1 : 0
 
-  let strediskoStr = strediskoE.innerText.trim() == '' ? '%' : strediskoE.innerText.trim()
+  cols['internet'].clearCh().appendChild(internetF)
+  internetF.onchange = () => row.obj['internet'] = internetF.checked ? 1 : 0
+
+  let strediskoStr = row.obj['stredisko'] ? row.obj['stredisko'] : '%'
+  console.log(strediskoStr)
+  row.obj['stredisko'] = strediskoStr
   let strediskoF = document.createElement('select')
   fetch('api/strediska/get-basic.php')
   .then(r => {
@@ -57,19 +56,20 @@ function formatRowEdit(row){
       strediskoF.appendChild(option)
     }
     strediskoF.value = strediskoStr
-    strediskoE.clearCh().appendChild(strediskoF)
+    cols['stredisko'].clearCh().appendChild(strediskoF)
+    strediskoF.onchange = () => row.obj['stredisko'] = strediskoF.value
   })
 
-  let opravneniStr = opravneniE.innerText
+  let opravneniStr = row.obj['opravneni']
   fetch(api + 'get-opravneni.php')
   .then(r => {
     if(r.status != 200) alertError(r, 'edit-get-opravneni')
     return r.json()
   })
   .then(r => {
-    opravneniE.clearCh()
+    cols['opravneni'].clearCh()
     for(let o of r){
-      opravneniE.insertAdjacentHTML('beforeend', `
+      cols['opravneni'].insertAdjacentHTML('beforeend', `
       <label style='display:block'>
         <input name='${o['zkratka']}' type='checkbox' ${opravneniStr.includes(o['zkratka']) ? 'checked' : ''}>
         ${o['popis']}
@@ -80,30 +80,26 @@ function formatRowEdit(row){
 
   return row
 }
-function deformatRowEdit(row){
-  row.contentEditable = false;
-
-  let strediskoE = row.querySelector('[name=stredisko]')
-  let internetE = row.querySelector('[name=internet]')
-  let opravneniE = row.querySelector('[name=opravneni]')
-
-  let strediskoF = row.querySelector('[name=stredisko] select')
-  let internetF = row.querySelector('[name=internet] input')
-  let opravneniF = row.querySelectorAll('[name=opravneni] input')
+function deformatRowEdit(row, cols){
+  let opravneniF = cols['opravneni'].querySelectorAll('input')
 
   let opravneniStr = ''
   for(let o of opravneniF){
     opravneniStr += o.checked ? o.getAttribute('name') : ''
   }
 
-  strediskoE.clearCh().innerText = strediskoF.value
-  internetE.clearCh().innerText = internetF.checked ? 1 : 0
-  opravneniE.clearCh().innerText = opravneniStr
+  row.obj['opravneni'] = opravneniStr
+  cols['opravneni'].clearCh().innerText = opravneniStr
 
   return row
 }
 
 select.value = '%'
-let table = new MTable(api, getRows, rowElementBase, null, null, formatRowEdit, deformatRowEdit)
+let table = new MTable(api, ['stredisko', 'internet'])
+
+table.getRows = getRows
+table.rowElementBase = rowElementBase
+table.formatRowEdit = formatRowEdit
+table.deformatRowEdit = deformatRowEdit
 
 select.onchange = table.getRowsDisplay

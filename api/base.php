@@ -11,3 +11,10 @@ if (!loggedIn()) {
 function loggedIn(){
   return isset($_SESSION['id_jmeno']);
 }
+
+if(isset($_POST['obj'])) {
+  $obj = json_decode($_POST['obj'], true);
+}
+else {
+  $obj = json_decode(file_get_contents("php://input"), true);
+}

@@ -50,7 +50,7 @@ function sendEmails($obj){
     $addresses[] = $row['email'];
   }
 
-  sendEmail($body, $addresses);
+  // sendEmail($body, $addresses);
 }
 
 function sendEmail($body, $addresses){

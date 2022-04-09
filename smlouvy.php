@@ -12,7 +12,7 @@
 	<h2>Smlouvy</h2>
 	<div class="obsah">
 		<div class='flex'>
-			<select id="select-typ" class="select-menu">
+			<select id="select-typ">
 				<option value="%">Vše</option>
 				<?php
 					$result = mysqli_query($link, 'select id_typuSmlouvy as id, popis from typysmluv');
@@ -24,7 +24,7 @@
 				?>
 			</select>
 			<div class='gap'></div>
-			<select id="select-stredisko" class="select-menu">
+			<select id="select-stredisko">
 				<?php
 					$result = mysqli_query($link, 'select zkratka, nazev from seznam_str');
 					while($radek = mysqli_fetch_assoc($result)){
@@ -36,7 +36,7 @@
 			</select>
 		</div>
 		<div class='flex'>
-			<select id='select-rok' class='select-menu'>
+			<select id='select-rok'>
 				<option value=''>Vše</option>
 				<?php
 					for($year = date('Y'); $year >= 2002; $year--){
@@ -49,7 +49,7 @@
 			<span class='flex flex-center-v'>  do: </span><input id='input-do' type='date'>
 		</div>
 		<div class='flex flex-center-v'>
-			<input id="search" class="txt " <?=(isset($_GET['cislo']) ? 'value='.$_GET['cislo'] : '')?>>
+			<input id="search" class="txt">
 			<div class='gap'></div>
 			<a id='new-button'>Nová smlouva</a>
 		</div>
@@ -63,13 +63,13 @@
 					<td column="datumUzavreni" title='Datum uzavření'>Datum uz.</td>
 					<td column="cena">Cena</td>
 					<td column="velikost">Velikost</td>
-					<td column="strediska" title='Střediska'>Střed.</td>
-					<td column="partneri">Partneři</td>
+					<td column="strediska" nosort title='Střediska'>Střed.</td>
+					<td column="partneri" nosort>Partneři</td>
 					<td column="rodneCislo" title='Fyzická osoba'>Fyz. osoba</td>
 					<td column="datumOd">Od</td>
 					<td column="datumDo">Do</td>
 					<td column="faktura">Faktura</td>
-					<td column="prilohy">Přílohy</td>
+					<td column="prilohy" nosort>Přílohy</td>
 					<!-- <td column="zaruky">Záruky</td> -->
 					<td nosort>Akce</td>
 				</tr>

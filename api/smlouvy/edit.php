@@ -1,25 +1,29 @@
 <?php
 require 'base-write.php';
 
-$obj = json_decode(file_get_contents("php://input"), true);
-
 $stmt = mysqli_prepare($link, "
-update partneri set
-nazev = ?,
-ico = ?,
-mesto = ?,
-ulice = ?,
-psc = ?,
-osoba = ?,
-kadresa = ?,
-telefon = ?,
-email = ?
+update smlouvy set
+cisloSmlouvy = ?,
+typSmlouvy = ?,
+datumUzavreni = ?,
+predmet = ?,
+cena = ?,
+velikost = ?,
+rodneCislo = ?,
+datumOd = ?,
+datumDo = ?
 
-where id_partnera = ?
+where id_smlouvy = ?
 ");
-$stmt->bind_param('sssssssssi', $obj['nazev'], $obj['ico'],$obj['mesto'],$obj['ulice'],$obj['psc'],$obj['osoba'],$obj['kadresa'],$obj['telefon'],$obj['email'],$obj['id']);
+$stmt->bind_param('sssssssssi', $obj['cisloSmlouvy'],$obj['typSmlouvy'],$obj['datumUzavreni'],$obj['predmet'],$obj['cena'],$obj['velikost'],$obj['rodneCislo'],$obj['datumOd'],$obj['datumDo'],$obj['id']);
 
-if($stmt->execute()) http_response_code(200);
+if($stmt->execute()) {
+    postStrediska($obj['id'], $obj['strediska']);
+    postPartneri($obj['id'], $obj['partneri']);
+    postPrilohy($obj['id'], $obj['newPrilohy']);
+
+    http_response_code(200);
+}
 else {
     echo $stmt->error;
     http_response_code(500);

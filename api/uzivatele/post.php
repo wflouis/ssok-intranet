@@ -10,6 +10,8 @@ values (?,?,?,?,?,?)
 $stmt->bind_param('ssssss', $user['jmeno'], $user['funkce'], $user['telefon'], $user['email'], $user['stredisko'], $user['internet']);
 echo $stmt->error;
 
+print_r($user);
+
 if($stmt->execute()) {
     postOpravneni($stmt->insert_id, $user['opravneni']);
 

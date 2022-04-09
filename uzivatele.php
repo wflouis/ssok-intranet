@@ -11,7 +11,7 @@
 
 	<h2>Seznam uživatelů</h2>
 	<div class="obsah">
-		<select id="select" class="select-menu">
+		<select id="select">
 		<?php
 			$result = mysqli_query($link, 'select zkratka, nazev from seznam_str');
 			while($radek = mysqli_fetch_assoc($result)){

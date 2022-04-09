@@ -1,7 +1,7 @@
 <?php
 require 'base-write.php';
 
-$obj = json_decode(file_get_contents("php://input"), true);
+
 
 $stmt = mysqli_prepare($link, "
 update seznam_str set
@@ -12,7 +12,7 @@ where id_str = ?
 ");
 $stmt->bind_param('ssi', $obj['zkratka'], $obj['nazev'], $obj['id']);
 
-postOstatni($obj['zkratka'], $obj['ostatni']);
+postOstatni($obj['id'], $obj['ostatni']);
 
 if($stmt->execute()) http_response_code(200);
 else {

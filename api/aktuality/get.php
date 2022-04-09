@@ -1,7 +1,7 @@
 <?php
 require 'base-read.php';
 
-$obj = json_decode(file_get_contents("php://input"), true);
+
 
 $order = $_GET['order'];
 $orderDirection = $_GET['order-direction'];

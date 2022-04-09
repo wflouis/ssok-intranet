@@ -1,16 +1,30 @@
 <?php
 require 'base-write.php';
 
-$obj = json_decode(file_get_contents("php://input"), true);
+
 
 $stmt = mysqli_prepare($link, "
-insert into partneri (nazev, ico, mesto, ulice, psc, osoba, kadresa, telefon, email) 
+insert into smlouvy (
+cisloSmlouvy,
+typSmlouvy,
+datumUzavreni,
+predmet,
+cena,
+velikost,
+rodneCislo,
+datumOd,
+datumDo
+) 
 values (?,?,?,?,?,?,?,?,?)
 ");
-$stmt->bind_param('sssssssss', $obj['nazev'], $obj['ico'],$obj['mesto'],$obj['ulice'],$obj['psc'],$obj['osoba'],$obj['kadresa'],$obj['telefon'],$obj['email']);
+$stmt->bind_param('sssssssss', $obj['cisloSmlouvy'],$obj['typSmlouvy'],$obj['datumUzavreni'],$obj['predmet'],$obj['cena'],$obj['velikost'],$obj['rodneCislo'],$obj['datumOd'],$obj['datumDo']);
 echo $stmt->error;
 
 if($stmt->execute()) {
+    $id = $stmt->insert_id;
+    postStrediska($id, $obj['strediska']);
+    postPartneri($id, $obj['partneri']);
+
     http_response_code(200);
 }
 else {

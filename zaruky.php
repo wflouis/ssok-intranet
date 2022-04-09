@@ -12,7 +12,7 @@
 	<h2>Seznam záruk</h2>
 	<div class="obsah">
 		<div class='flex'>
-			<select id="select-stredisko" class="select-menu">
+			<select id="select-stredisko">
 				<?php
 					$result = mysqli_query($link, 'select zkratka, nazev from seznam_str');
 					while($radek = mysqli_fetch_assoc($result)){
@@ -23,7 +23,7 @@
 				?>
 			</select>
 			<div class='gap'></div>
-			<select id="select-zadavatel" class="select-menu">
+			<select id="select-zadavatel">
 				<option value="">Všichni</option>
 				<?php
 					$result = mysqli_query($link, 'select distinct zaruky.zadal as id, seznam.jmeno from zaruky join seznam on seznam.id_jmeno = zaruky.zadal');
@@ -36,9 +36,9 @@
 			</select>
 		</div>
 		<div class='flex'>
-			<span class='flex flex-center-v'>od: </span><input id='input-od' type='date' class='select-menu'>
+			<span class='flex flex-center-v'>od: </span><input id='input-od' type='date'>
 			<div class='gap'></div>
-			<span class='flex flex-center-v'>  do: </span><input id='input-do' type='date' class='select-menu'>
+			<span class='flex flex-center-v'>  do: </span><input id='input-do' type='date'>
 		</div>
 
 		<div class='flex flex-center-v'>

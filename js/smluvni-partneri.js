@@ -4,7 +4,7 @@ let api = 'api/smluvni-partneri/'
 // dom manipulation
 function rowElementBase(obj){
   return `
-  <td name="nazev">${obj['name'] ?? ''}</td>
+  <td name="nazev">${obj['nazev'] ?? ''}</td>
   <td name="ico">${obj['ico'] ?? ''}</td>
   <td name="mesto">${obj['mesto'] ?? ''}</td>
   <td name="ulice">${obj['ulice'] ?? ''}</td>
@@ -16,4 +16,5 @@ function rowElementBase(obj){
 `
 }
 
-let table = new MTable(api, null, rowElementBase, null, null, null, null)
+let table = new MTable(api)
+table.rowElementBase = rowElementBase
