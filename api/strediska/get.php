@@ -6,7 +6,7 @@ $order = empty($_GET['order']) ? 'nazev' : $_GET['order'];
 $orderDirection = empty($_GET['order-direction']) ? 'desc' : $_GET['order-direction'];
 
 $stmt = mysqli_prepare($link, "
-select id_str as id, zkratka, nazev
+select id_str as id, zkratka, nazev, poradi
 from seznam_str
 where lower(nazev) like lower(?)
 order by $order $orderDirection

@@ -46,17 +46,27 @@ and EXISTS (
         seznam_str.zkratka like ?
 )
 and (seznam.id_jmeno = ? or ? = '')
-and datumZarukyOd >= ? and datumZarukyOd <= ?
-and datumZarukyDo <= ? and datumZarukyDo >= ?
+and datumZarukyOd <= ?
+and datumZarukyDo >= ?
 
 
 order by $order $orderDirection
 limit 50
 ");
 echo mysqli_error($link);
-$stmt->bind_param('sssssssss', $search, $search, $stredisko, $zadavatel, $zadavatel, $od, $do, $do, $od);
+$stmt->bind_param('sssssss', $search, $search, $stredisko, $zadavatel, $zadavatel, $do, $od);
 $stmt->execute();
 $result = $stmt->get_result();
 echo $stmt->error;
 
 echo json_encode(mysqli_fetch_all($result, MYSQLI_ASSOC));
+
+// and datumZarukyOd >= ? and datumZarukyOd <= ?
+// and datumZarukyDo <= ? and datumZarukyDo >= ?
+
+
+// order by $order $orderDirection
+// limit 50
+// ");
+// echo mysqli_error($link);
+// $stmt->bind_param('sssssssss', $search, $search, $stredisko, $zadavatel, $zadavatel, $od, $do, $do, $od);

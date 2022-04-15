@@ -1,8 +1,6 @@
 <?php
 require 'base-write.php';
 
-
-
 $stmt = mysqli_prepare($link, "
 update partneri set
 nazev = ?,

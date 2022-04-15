@@ -6,6 +6,7 @@ function rowElementBase(obj){
   return `
   <td name="zkratka">${obj['zkratka'] ?? ''}</td>
   <td name="nazev">${obj['nazev'] ?? ''}</td>
+  <td name="poradi">${obj['poradi'] ?? ''}</td>
   <td name="ostatni">${stringifyOstatni(obj['ostatni'])}</td>
 `
 }
@@ -44,6 +45,9 @@ function deformatRowEdit(row, cols){
   return row
 }
 
-let table = new MTable(api)
-table.rowElementBase = rowElementBase
-table.deformatRowEdit = deformatRowEdit
+let mTable = new MTable(api)
+mTable.setSearch()
+mTable.setNewButton('Nové středisko')
+
+mTable.rowElementBase = rowElementBase
+mTable.deformatRowEdit = deformatRowEdit

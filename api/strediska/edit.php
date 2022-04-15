@@ -1,16 +1,15 @@
 <?php
 require 'base-write.php';
 
-
-
 $stmt = mysqli_prepare($link, "
 update seznam_str set
 zkratka = ?,
-nazev = ?
+nazev = ?,
+poradi = ?
 
 where id_str = ?
 ");
-$stmt->bind_param('ssi', $obj['zkratka'], $obj['nazev'], $obj['id']);
+$stmt->bind_param('ssii', $obj['zkratka'], $obj['nazev'], $obj['poradi'], $obj['id']);
 
 postOstatni($obj['id'], $obj['ostatni']);
 

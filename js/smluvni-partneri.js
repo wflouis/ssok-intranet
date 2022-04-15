@@ -16,5 +16,8 @@ function rowElementBase(obj){
 `
 }
 
-let table = new MTable(api)
-table.rowElementBase = rowElementBase
+let mTable = new MTable(api)
+mTable.setSearch()
+mTable.setNewButton('Nový partner')
+
+mTable.rowElementBase = rowElementBase

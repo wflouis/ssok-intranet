@@ -9,7 +9,7 @@ let inputDo = document.getElementById('input-do')
 function getRows(order, orderDirection) {
   return fetch(
     api + 'get.php' +
-    '?search=' + search.value +
+    '?search=' + mTable.search.value +
     '&stredisko=' + selectStredisko.value +
     '&zadavatel=' + selectZadavatel.value +
     '&od=' + inputOd.value +
@@ -43,19 +43,32 @@ function deformatRowEdit(row){
 }
 
 selectStredisko.value = '%'
-let table = new MTable(api)
-table.getRows = getRows
-table.rowElementBase = rowElementBase
-table.formatRowEdit = formatRowEdit
-table.deformatRowEdit = deformatRowEdit
+let mTable = new MTable(api)
+mTable.setSearch()
 
-selectStredisko.onchange = table.getRowsDisplay
-selectZadavatel.onchange = table.getRowsDisplay
-inputOd.onchange = table.getRowsDisplay
-inputDo.onchange = table.getRowsDisplay
+mTable.getRows = getRows
+mTable.rowElementBase = rowElementBase
+mTable.formatRowEdit = formatRowEdit
+mTable.deformatRowEdit = deformatRowEdit
 
-table.rowCallback = (tr, obj) => {
+selectStredisko.onchange = mTable.getRowsDisplay
+selectZadavatel.onchange = mTable.getRowsDisplay
+inputOd.onchange = mTable.getRowsDisplay
+inputDo.onchange = mTable.getRowsDisplay
+
+mTable.rowCallback = (tr, obj) => {
   tr.onclick = () => {
     window.location = './smlouvy.php?search=' + obj['cisloSmlouvy']
   }
+
+  Array.from(tr.querySelectorAll('[akce]')).map(a => a.remove())
+
+  let days = (new Date(obj['datumZarukyDo']) - new Date()) / 1000 / 86400
+  if(days > 30 || days <= -1) return
+  tr.style.backgroundColor = 'rgba(255,0,0,'+ (1 - days / 30) +')'
 }
+mTable.columns.forEach(c => {
+  if(c.getAttribute('column') == 'datumZarukyDo'){
+    c.onclick()
+  }
+})

@@ -10,11 +10,8 @@
 	<script src='js/seznam.js' defer></script>
 	<script src='js/aktuality.js' defer></script>
 
-	<h2>Aktuality</h2>
+	<h2 class="obsah-title">Aktuality</h2>
 	<div class="obsah">
-		<!-- <textarea id='txt-text' class='txt'></textarea> -->
-		<button id='new-button' class='btn'>Nová zpráva</button>
-		<div class="gap"></div>
 		<table class="table">
 			<thead>
 				<tr>

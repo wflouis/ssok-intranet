@@ -11,6 +11,8 @@ $stmt->bind_param('sssssssss', $obj['nazev'], $obj['ico'],$obj['mesto'],$obj['ul
 echo $stmt->error;
 
 if($stmt->execute()) {
+    $id = $stmt->insert_id;
+    echo "{\"id\":$id}";
     http_response_code(200);
 }
 else {

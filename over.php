@@ -32,6 +32,8 @@ if (!isset($_SESSION["id_jmeno"])) {
 				//  z�znam historie
 				$result = mysqli_query($link, "INSERT INTO historie VALUES ({$_SESSION["id_jmeno"]}, NOW())");
 
+				if(expiringZaruky()) header('location: zaruky.php?alert');
+
 				return;
 			} else {
 				if (!empty($_POST['email'])) {
@@ -87,5 +89,13 @@ function vratIP() {
             return $_SERVER["HTTP_CLIENT_IP"];
      }
      return '';
+}
+
+function expiringZaruky(){
+	global $link;
+	
+	$result = mysqli_query($link, "select datumZarukyDo from zaruky where zadal = {$_SESSION['id_jmeno']} and datediff(current_date, datumZarukyDo) <= 30");
+
+	return $result->num_rows > 0;
 }
 ?>

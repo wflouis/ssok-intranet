@@ -45,8 +45,11 @@
     }
     ?>
     <div class="header-account">
-      <i class="fa fa-user-circle fa-2x"></i>
-      <span class="header-account-name"><?php echo (empty($_SESSION["id_jmeno"])?"Nepřihlášen":$_SESSION["jmeno"]); ?></span>
+      <div class='header-account-info'>
+        <i class="fa fa-user-circle fa-2x"></i>
+        <span class="header-account-name"><?php echo (empty($_SESSION["id_jmeno"])?"Nepřihlášen":$_SESSION["jmeno"]); ?></span>
+      </div>
+      <?=(isset($_SESSION['id_jmeno']) ? "<a class='header-logout icon logout-icon' href='logout.php'></a>" : '')?>
     </div>
   </div>
   <div class="page">

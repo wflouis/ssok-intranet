@@ -9,7 +9,7 @@
 	<script src='js/seznam.js' defer></script>
 	<script src='js/smlouvy.js' defer></script>
 
-	<h2>Smlouvy</h2>
+	<h2 class="obsah-title">Smlouvy</h2>
 	<div class="obsah">
 		<div class='flex'>
 			<select id="select-typ">
@@ -48,12 +48,6 @@
 			<span class='flex flex-center-v'>platnost od: </span><input id='input-od' type='date'>
 			<span class='flex flex-center-v'>  do: </span><input id='input-do' type='date'>
 		</div>
-		<div class='flex flex-center-v'>
-			<input id="search" class="txt">
-			<div class='gap'></div>
-			<a id='new-button'>Nová smlouva</a>
-		</div>
-		<div class="gap"></div>
 		<table id='smlouvy' class="table">
 			<thead>
 				<tr>
@@ -68,7 +62,7 @@
 					<td column="rodneCislo" title='Fyzická osoba'>Fyz. osoba</td>
 					<td column="datumOd">Od</td>
 					<td column="datumDo">Do</td>
-					<td column="faktura">Faktura</td>
+					<td column="faktury" nosort>Faktury</td>
 					<td column="prilohy" nosort>Přílohy</td>
 					<!-- <td column="zaruky">Záruky</td> -->
 					<td nosort>Akce</td>

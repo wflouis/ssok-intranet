@@ -42,6 +42,7 @@ a{
 a:hover{
   cursor: pointer;
   text-decoration:underline;
+  text-decoration-color: #8184ff;
 }
 
 .sgap{
@@ -97,21 +98,20 @@ h6 {
   padding-right:var(--pagePadding);
   padding-left:var(--pagePadding);
   
-	display: flex;
-	align-items: center;
-  justify-content: space-between;
+  display: flex;
+  align-items: center;
   
-	height:var(--headerHeight);
-	box-sizing:border-box;
-	
+  height:var(--headerHeight);
+  box-sizing:border-box;
+  
   /* background-image: url("../images/pozadi.jpg"); */
   background-image: radial-gradient(circle at center, var(--primaryColor), var(--primaryDark));
-	background-position: center;
+  background-position: center;
   background-repeat: no-repeat;
-	background-size: cover;
-	/* opacity: .9; */
-	
-	z-index: 1;
+  background-size: cover;
+  /* opacity: .9; */
+  
+  z-index: 1;
 }
 .header-logo{
   width:300px;
@@ -127,6 +127,13 @@ h6 {
 }
 .header-account{
   display:flex;
+  flex-direction: column;
+  align-items:center;
+  margin-left:auto;
+}
+.header-account-info{
+	margin-left:auto;
+  display: flex;
   align-items: center;
 }
 .header-account-name{
@@ -168,6 +175,9 @@ h6 {
   display:flex;
 }
 
+.obsah-title{
+	padding-left:12px;
+}
 .obsah {
   /* background-color: #2a2a2ab0; */
   background-color: var(--gray);
@@ -239,7 +249,7 @@ input[type=file]{
 	width:200px;
 	padding:10px 13px;
 }
-.txt-max-width{
+.txt-stretch{
 	width:100%;
 }
 
@@ -304,13 +314,13 @@ input[type=file]{
 	white-space:pre-wrap;
 }
 
-.table {
+table {
 	width: auto;
 /*	border-radius: 4px;
 	border: 1px solid #1c7496; */
 	border-collapse: inherit;
 }
-.table thead {
+thead {
 	color: #fff;
 	font-size: small;
 	background-image: linear-gradient(to bottom, #003448ad, #00b8ff70);
@@ -340,7 +350,7 @@ thead td.sort-num-up:after {
 	margin-left:5px;
 }
 
-tbody td {
+table:not(#folders) tbody td {
 	border: 0;
 	padding: 4px 8px;
 	vertical-align: middle;
@@ -356,10 +366,30 @@ thead td:not([nosort]):hover{
 tbody > tr:nth-child(2n) {
 	background-color: #a0a0a05c;
 }
-#smlouvy tbody > tr{
+
+#smlouvy > tbody > tr{
+	background-color: #0000;
+}
+#smlouvy > tbody > tr:nth-child(3n+1){
 	background-color: #a0a0a05c;
 }
-#smlouvy tbody > tr:nth-child(6n+1), #smlouvy tbody > tr:nth-child(6n+2), #smlouvy tbody > tr:nth-child(6n+3){
+/* #smlouvy > tbody > tr{
+	background-color: #a0a0a05c;
+}
+#smlouvy > tbody > tr:nth-child(6n+1), #smlouvy > tbody > tr:nth-child(6n+2), #smlouvy > tbody > tr:nth-child(6n+3){
+	background-color: #0000;
+} */
+
+/* .table-overflow > tbody > tr{
+	background-color: #a0a0a05c;
+}
+.table-overflow > tbody > tr:nth-child(4n+1), .table-overflow > tbody > tr:nth-child(4n+2){
+	background-color: #0000;
+} */
+.table-overflow > tbody > tr{
+	background-color: #a0a0a05c;
+}
+.table-overflow > tbody > tr:nth-child(2n){
 	background-color: #0000;
 }
 
@@ -425,27 +455,27 @@ td{
 	text-align:right;
 }
 
-.smlouvy-zaruky{
+.row-dropdown{
 	position:relative;
 	display:flex;
 	flex-direction: column;
 }
-.zaruky-reveal{
+.row-dropdown-button{
 	display:flex;
 	justify-content:center;
 	padding:5px 0;
 }
-.zaruky-reveal:hover{
+.row-dropdown-button:hover{
 	cursor:pointer;
 }
-.zaruky-reveal>span{
+.row-dropdown-button > span{
 	transform:scaleX(2);
 	user-select: none;
 }
 .hidden{
 	display:none;
 }
-.zaruky-content{
+.row-dropdown-content{
 	position:static;
 	top:30px;
 	left:0;
@@ -457,4 +487,56 @@ td{
 	background-color:var(--graySolid);
 
 	white-space:pre-wrap;
+}
+.row-dropdown-content .row-dropdown-content{
+	padding:0px;
+}
+
+.table-new-icon::after{
+	content:'\f055';
+	font-size:1.5em;
+	padding-left:10px;
+}
+.icon{
+	width:30px;
+	height:30px;
+	margin:10px 0;
+
+	display:flex;
+	justify-content:center;
+	align-items:center;
+
+	font-family: FontAwesome;
+	font-size: 1.2em;
+	font-style:normal;
+	/* color:white; */
+}
+.td-xmark::after{
+	content:'\f00d';
+	color:rgb(242, 48, 48);
+}
+.td-cancel::after{
+	content:'\f05e';
+}
+.td-save::after{
+	content:'\f0c7';
+}
+.logout-icon{
+	margin:0;
+}
+.logout-icon::after{
+	content:'\f08b';
+	font-size: 1.5em;
+}
+
+.input-file-icon{
+	width: 50px;
+	height:50px;
+}
+.input-file-icon input{
+	display:none;
+}
+.input-file-icon::after{
+	content:'\f15b';
+	font-size: 1.5em;
 }

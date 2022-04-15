@@ -19,11 +19,12 @@
 }
 @media (max-width:600px){
 	:root{
+		--pagePadding:15px;
 		--headerHeight:70px;
 	}
 
 	.header-menu{
-		height: calc(100vh - var(--headerHeight));
+		/* height: calc(100vh - var(--headerHeight)); */
 		
 		display:flex;
 		padding-left:var(--pagePadding);
@@ -48,6 +49,7 @@
 		background-color:rgba(3, 54, 74, 0.9);
 
 		top:var(--headerHeight);
+		bottom:0;
 		left:0;
 		z-index: 1;
 

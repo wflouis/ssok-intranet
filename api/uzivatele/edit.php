@@ -1,8 +1,6 @@
 <?php
 require 'base-write.php';
 
-$user = json_decode(file_get_contents("php://input"), true);
-
 $stmt = mysqli_prepare($link, "
 update seznam set
 jmeno = ?,
@@ -14,9 +12,9 @@ internet = ?
 
 where id_jmeno = ?
 ");
-$stmt->bind_param('ssssssi', $user['jmeno'], $user['funkce'], $user['telefon'], $user['email'], $user['stredisko'], $user['internet'], $user['id']);
+$stmt->bind_param('ssssssi', $obj['jmeno'], $obj['funkce'], $obj['telefon'], $obj['email'], $obj['stredisko'], $obj['internet'], $obj['id']);
 
-postOpravneni($user['id'], $user['opravneni']);
+postOpravneni($obj['id'], $obj['opravneni']);
 
 if($stmt->execute()) http_response_code(200);
 else {

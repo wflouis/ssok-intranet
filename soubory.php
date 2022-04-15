@@ -21,7 +21,8 @@
 
 	if ($radek = mysqli_fetch_assoc($result)) {
 		// $modulPath = "/mnt/tonda/".$radek["adresar"]."/";
-		$modulPath = "images";
+		$basePath = '/test_soubory/';
+		$modulPath = $_SERVER['DOCUMENT_ROOT'] . "/soubory" . $basePath;
 		$title = $radek['popis'];
 	} else {
 		$modulPath = "";
@@ -74,7 +75,7 @@
 ?>
 
 <div>
-	<h2><?=$title?></h2>
+	<h2 class="obsah-title"><?=$title?></h2>
 	<div class="obsah">
 		<p class="search-text">Kliknutím na záhlaví sloupce dojde k seřazení záznamů dle příslušného sloupce.<br>
 			V poli vyhledat je možné zadat vyhledávací řetezce, kterými mohou být části názvu hledaného souboru oddělené mezerou.<br>
@@ -87,14 +88,57 @@
 				<input class='txt ' name="najit" type="text" placeholder="Hledaný text ...">
 				<button class='btn btn-width'><i class='fa fa-search'></i></button>
 			</div>
+			<label class="txt button icon input-file-icon"><input type="file" multiple oninput="uploadFiles(event)"></label>
 			<div class='gap'></div>
 		</form>
+		<script>
+			let dirPath = '<?=$basePath . $path?>/'
+			function uploadFiles(e){
+				let formData = new FormData();
+				let length = e.target.files.length
+				for(let f of e.target.files){
+					formData.append('files[]', f)
+				}
+				fetch('api/soubory/post.php?path=' + encodeURIComponent(dirPath), {
+					method:'post',
+					body:formData
+				})
+				.then(r => r.text())
+				.then(r => {
+					if(r != ''){
+						alert(r)
+					}
+					else{
+						if(confirm('Soubory (' + length + ') nahrány')){
+							location.reload()
+						}
+					}
+				})
+				e.target.value = ''
+			}
+			function deleteFile(row, name){
+				event.cancelBubble = true
+				let path = (dirPath + name).replaceAll('//', '/')
+				if(confirm('Smazat soubor: ' + path)){
+					fetch('api/soubory/delete.php?path=' + encodeURIComponent(path), {method:'post'})
+					.then(r => r.text())
+					.then(r => {
+						if(r != ''){
+							alert(r)
+							return
+						}
+						row.remove()
+					})
+				}
+			}
+		</script>
 		<table id="folders" class="table">
 			<thead>
 				<tr path="soubory.php?modul=<?=$_GET["modul"]?>&path=<?=$path?>">
 					<td class="<?=(($_SESSION["podle"]=="1")? (($_SESSION["smer"]%2==0)?"sort-asc":"sort-desc"):"")?>" colspan="2" sort="1">Název souboru</td>
-					<td class="<?=(($_SESSION["podle"]=="2")? (($_SESSION["smer"]%2==0)?"sort-num-down":"sort-num-up"):"")?>" sort="2">datum</td>
-					<td class="text-right <?=(($_SESSION["podle"]=="3")? (($_SESSION["smer"]%2==0)?"sort-num-down":"sort-num-up"):"")?>" sort="3">velikost</td>
+					<td class="<?=(($_SESSION["podle"]=="2")? (($_SESSION["smer"]%2==0)?"sort-num-down":"sort-num-up"):"")?>" sort="2">Datum</td>
+					<td class="text-right <?=(($_SESSION["podle"]=="3")? (($_SESSION["smer"]%2==0)?"sort-num-down":"sort-num-up"):"")?>" sort="3">Velikost</td>
+					<td>Smazat</td>
 				</tr>
 			</thead>
 			<tbody>
@@ -107,7 +151,7 @@
 include "pata.php";
 
 function obsahAdr($modulPath,$path,$smer,$podle,$najit="",$selekce="") {
-	global $icons, $Adresar, $AdresarCesta, $DatumAdresare, $Nazev, $Cesta, $DatumSouboru, $Velikost;
+	global $icons, $Adresar, $AdresarCesta, $DatumAdresare, $Nazev, $Cesta, $DatumSouboru, $Velikost, $basePath;
 	if (!isset($Adresar))
 		$Adresar = $AdresarCesta = $DatumAdresare = $Nazev = $Cesta = $DatumSouboru = $Velikost = array();
 
@@ -160,20 +204,22 @@ function obsahAdr($modulPath,$path,$smer,$podle,$najit="",$selekce="") {
 			$sortSoubor   = array_reverse($sortSoubor,true);
 		}
 		if (!empty($path) && substr_count($path,"/")>0) {
-			   echo "<tr path=\"soubory.php?modul=".$_GET["modul"]."&path=".substr($path,0,strrpos($path,"/"))."\"><td>";
+			   echo "<tr folder='true' path=\"soubory.php?modul=".$_GET["modul"]."&path=".substr($path,0,strrpos($path,"/"))."\"><td>";
 			   echo "<img src=\"images/updir.png\" border=\"0\"></td>";
-			   echo "<td> ..</td><td></td><td align=\"right\"></td></tr>\n";
+			   echo "<td> ..</td><td></td><td align=\"right\"></td><td></td></tr>";
 		}
 		foreach($sortAdresar as $key => $value) {
 			if (strrpos(strrchr($path, "/"),"(dle strediska)")==false || empty($_SESSION["dleStrediska"]) || strpos($Adresar[$key],$_SESSION["dleStrediska"]) || strpos($Adresar[$key],"reditelstvi")) {
-			    echo "<tr path=\"soubory.php?modul=".$_GET["modul"]."&path=".$AdresarCesta[$key]."\"><td><img src=\"images/dir.png\" border=\"0\"></td><td>";
-			    echo $Adresar[$key]."</td><td>".date("d.m.Y",strtotime($DatumAdresare[$key]))."</td><td align=\"right\"></td></tr>\n";
+			    echo "<tr folder='true' path=\"soubory.php?modul=".$_GET["modul"]."&path=".$AdresarCesta[$key]."\"><td><img src=\"images/dir.png\" border=\"0\"></td><td>";
+			    echo $Adresar[$key]."</td><td>".date("d.m.Y",strtotime($DatumAdresare[$key]))."</td><td align=\"right\"></td><td></td></tr>\n";
 			}
 		}
 		foreach($sortSoubor as $key => $value) {
 			if (strrpos(strrchr($path, "/"),"(dle strediska)")==false || empty($_SESSION["dleStrediska"]) || strpos($Nazev[$key],$_SESSION["dleStrediska"]) || strpos($Nazev[$key],"reditelstvi")) {
-			    echo "<tr path=\"soubor.php?modul=".$_GET["modul"]."&path=".urlencode($Cesta[$key])."&file=".urlencode($Nazev[$key])."\"><td><img src=\"images/".$icons[strtolower(pathinfo($Nazev[$key], PATHINFO_EXTENSION))]."\" border=\"0\"></td><td class='table-filename'>";
-			    echo $Nazev[$key]."</td><td>".date("d.m.Y",strtotime($DatumSouboru[$key]))."</td><td align=\"right\">".(round($Velikost[$key]/1000))." kB</td></tr>\n";
+			    echo "<tr path='". str_replace('//', '/', 'soubory/' . $basePath . $path . '/' . $Nazev[$key]) ."'><td><img src=\"images/".$icons[strtolower(pathinfo($Nazev[$key], PATHINFO_EXTENSION))]."\" border=\"0\"></td><td class='table-filename'>";
+			    echo $Nazev[$key]."</td><td>".date("d.m.Y",strtotime($DatumSouboru[$key]))."</td><td align=\"right\">".(round($Velikost[$key]/1000))." kB</td>
+				<td onclick='deleteFile(this.parentNode, \"{$Nazev[$key]}\")'><a class='icon td-xmark'></a></td>
+				</tr>\n";
 			}
 		}
  	}

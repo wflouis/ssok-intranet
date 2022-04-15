@@ -27,40 +27,29 @@ $order = empty($_GET['order']) ? 'cisloSmlouvy' : $_GET['order'];
 $orderDirection = empty($_GET['order-direction']) ? 'asc' : $_GET['order-direction'];
 
 $stmt = mysqli_prepare($link, "SELECT
-    smlouvy.id_smlouvy as id, smlouvy.cisloSmlouvy, typysmluv.popis, smlouvy.datumUzavreni, smlouvy.predmet, smlouvy.cena, smlouvy.velikost,
-    rodneCislo, datumOd, datumDo, concat(faktura, '\nuhrazeno:\n', uhrazeno) as faktura,
-    (
-        select group_concat(concat(predmetZaruky, '\nod: ', datumZarukyOd, '\ndo: ', datumZarukyDo, '\n\n',
-        coalesce((
-            select group_concat(concat(datumKontroly, ' ', vysledekKontroly, '\nodstranění: ', datumOdstraneni) separator '\n\n')
-            from kontroly
-            where id_smlouvy = smlouvy.id_smlouvy and id_zaruky = zaruky.id_zaruky
-        ), 'bez kontrol')
-        ) separator '\n<hr>\n')
-        from zaruky
-        where id_smlouvy = smlouvy.id_smlouvy
-    ) as zaruky
+    smlouvy.id_smlouvy as id, smlouvy.cisloSmlouvy, smlouvy.typSmlouvy, typysmluv.popis, smlouvy.datumUzavreni, smlouvy.predmet, smlouvy.cena, smlouvy.velikost,
+    rodneCislo, datumOd, datumDo
 from smlouvy
 left join typysmluv on typysmluv.id_typuSmlouvy = smlouvy.typSmlouvy
 where
     (cisloSmlouvy like ? or smlouvy.predmet collate utf8_general_ci like ?)
     and typSmlouvy like ?
-    and EXISTS (
-        select seznam_str.zkratka from smlouvystr
+    and ((
+        select COUNT(*) as c from smlouvystr
         join seznam_str on seznam_str.id_str = smlouvystr.id_strediska
         where
             smlouvystr.id_smlouvy = smlouvy.id_smlouvy and
             seznam_str.zkratka like ?
-    )
+    ) > 0 or ? = '%')
     and datumUzavreni between ? and ?
-    and datumOd >= ? and datumOd <= ?
-    and datumDo <= ? and datumDo >= ?
+    and datumOd <= ?
+    and datumDo >= ?
 order by $order $orderDirection
 limit 50
 ");
 
 echo mysqli_error($link);
-$stmt->bind_param('ssssssssss', $search, $search, $typ, $stredisko, $rokZacatek, $rokKonec, $platnostOd, $platnostDo, $platnostDo, $platnostOd);
+$stmt->bind_param('sssssssss', $search, $search, $typ, $stredisko, $stredisko, $rokZacatek, $rokKonec, $platnostDo, $platnostOd);
 $stmt->execute();
 $result = $stmt->get_result();
 echo $stmt->error;
@@ -82,13 +71,18 @@ while($row = mysqli_fetch_assoc($result)){
     "), MYSQLI_ASSOC);
 
     $row['prilohy'] = mysqli_fetch_all(mysqli_query($link, "SELECT
-    nazev, velikost
-    from smlouvyprilohy
-    where smlouvyprilohy.id_smlouvy = {$row['id']}
+        nazev, velikost
+        from smlouvyprilohy
+        where smlouvyprilohy.id_smlouvy = {$row['id']}
+    "), MYSQLI_ASSOC);
+    
+    $row['faktury'] = mysqli_fetch_all(mysqli_query($link, "SELECT
+        faktura, uhrazeno, concat(faktura, ', uhrazeno: ', uhrazeno) as text
+        from smlouvyfak
+        where smlouvyfak.id_smlouvy = {$row['id']}
     "), MYSQLI_ASSOC);
 
     $rows[] = $row;
 }
-
 
 echo json_encode($rows);

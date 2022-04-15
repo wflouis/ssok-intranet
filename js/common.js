@@ -8,8 +8,18 @@ $(document).ready(function() {
 	$('#folders thead tr td').click(function() {
 		location = $(this).parent().attr('path')+'&podle='+$(this).attr('sort')+'&najit='+$('#hledat input[name=\'najit\']').val();
 	});
-	$('#folders tbody tr').click(function() {
-		location = $(this).attr('path');
+	$('#folders tbody td:not([onclick])').each(function(i, el) {
+		let href = el.parentNode.getAttribute('path')
+
+		el.innerHTML = `<a href='${href}' ${el.parentNode.getAttribute('folder') ? '' : 'target="_blank"'}
+		style="
+		display:flex;width:100%;height:45px;
+		align-items:center;
+		color:white;text-decoration:none;
+		padding:4px 8px;
+		box-sizing:border-box;
+		">
+		${el.innerHTML}</a>`
 	});
 	DnesJe();
 	

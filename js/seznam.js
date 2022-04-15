@@ -4,6 +4,16 @@ Object.prototype.clearCh = function() {
   return this
 }
 
+function parentHasClass(el, className) {
+  return (el.classList && el.classList.contains(className)) || (el.parentNode && parentHasClass(el.parentNode, className))
+}
+function parentHasId(el, id) {
+  return (el.id && el.id == id) || (el.parentNode && parentHasId(el.parentNode, id))
+}
+function parentHasTag(el, tag) {
+  return (el.tagName == tag) || (el.parentNode && parentHasTag(el.parentNode, tag))
+}
+
 let errorMessage = 'Akce se nezdařila.'
 function alertError(r, code){
   // alert(errorMessage + ' Kód chyby: ' + code)
@@ -44,6 +54,7 @@ class MTable {
     return row.obj
   }
 
+  // replaces cells with edit inputs and dynamically updates row.obj
   formatRowEditBase(row){
     row.contentEditable = true
     
@@ -51,6 +62,7 @@ class MTable {
 
     return row
   }
+  // retrieve remaining static edited values to row.obj
   deformatRowEditBase(row, save, obj){
     if(!obj) {
       this.fillRowObj(row, this.editFormattedColumns)
@@ -58,44 +70,35 @@ class MTable {
     }
 
     if(this.deformatRowEdit) this.deformatRowEdit(row, row.cols, save)
+  }
+  resetRow(row, obj){
+    if(!obj) {
+      obj = row.obj
+    }
 
     let index = this.removeRow(row)
-    this.insertRow(obj, index)
+    return this.insertObjRow(obj, false, index)
   }
   removeRow(row){
-    let index = Array.from(this.table.children).indexOf(row)
+    let index = Array.from(this.tableBody.children).indexOf(row)
     row.remove()
     return index
   }
 
-  constructor(api, editFormattedColumns){
-    this.api = api;
+  constructor(api, editFormattedColumns, tableBody){
+    this.api = api
     this.editFormattedColumns = editFormattedColumns ?? []
     
     this.getRows = this.getRowsDefault
 
-    this.search = document.getElementById('search')
-    this.search.value = window.location.href.split('?search=')[1] ?? ''
-    this.table = document.getElementById('table-body')
-    this.table.spellcheck = false
-    
-    let btnCreate = document.getElementById('new-button')
-    if(btnCreate){
-      let displayCreateNew = () => {
-        let row = this.rowElement({})
-        row.classList.add('create')
-        
-        row = this.insertRow(row, 0)
-        this.formatRowEditBase(row)
-      }
-
-      btnCreate.onclick = displayCreateNew
-    }
+    this.tableBody = tableBody ?? document.getElementById('table-body')
+    this.tableBody.spellcheck = false
+    this.table = this.tableBody.parentNode
 
     // sort
-    let columns = document.querySelectorAll('thead td:not([nosort])')
+    let columns = this.table.querySelectorAll('thead td:not([nosort])')
     let sortTimeoutId = 0
-    columns.forEach(c => {
+    columns.forEach((c, i) => {
       c.onclick = () => {
         let sort = c.classList.contains('sort-asc') ? 'desc' : 'asc'
 
@@ -109,53 +112,105 @@ class MTable {
         clearTimeout(sortTimeoutId)
         sortTimeoutId = setTimeout(this.getRowsDisplay, sortTimeoutId == 0 ? 0 : 500)
       }
+      if(i == 0) c.onclick()
     })
     this.columns = columns
-    columns[0].click()
+  }
 
-    if(this.search){
-      let searchTimeoutId = 0
-      search.oninput = () => {
-        clearTimeout(searchTimeoutId)
-        searchTimeoutId = setTimeout(this.getRowsDisplay, 500)
-      }
+  setNewButton(name){
+    let btnNew = document.createElement('a')
+    btnNew.classList.add('icon', 'table-new-icon')
+
+    btnNew.onclick = this.displayCreate
+
+    this.tableBody.parentNode.insertAdjacentElement('beforebegin', btnNew)
+  }
+  setSearch(){
+    let search = document.createElement('input')
+    search.classList.add('txt')
+    search.placeholder = 'Hledat...'
+
+    search.value = window.location.href.split('?search=')[1] ?? ''
+    let searchTimeoutId = 0
+    search.oninput = () => {
+      clearTimeout(searchTimeoutId)
+      searchTimeoutId = setTimeout(this.getRowsDisplay, 500)
     }
+
+    this.tableBody.parentNode.insertAdjacentElement('beforebegin', search)
+
+    this.search = search
   }
 
   getRowsDisplay = () => {
     this.getRows(this.order,this.orderDir).then(this.displayRows)
   }
 
-  rowElement(obj){
-    let tr = document.createElement('tr')
-    tr.innerHTML = rowElementBase(obj) + `
-    <td class='action-default' contenteditable='false'>
-      <a>Upravit</a><br><a>Smazat</a>
+  rowElement(obj, create){
+    let row = document.createElement('tr')
+    row.innerHTML = this.rowElementBase(obj) + `
+    <td akce class='action-default' contenteditable='false'>
+      <a class="icon td-xmark"></a>
     </td>
-    <td class='action-edit' contenteditable='false'>
-      <a>Uložit</a><br><a>Zrušit</a>
+    <td akce class='action-edit' contenteditable='false'>
+      <a class="icon td-save"></a><a class="icon td-cancel"></a>
     </td>
-    <td class='action-create' contenteditable='false'>
-      <a>Uložit</a><br><a>Zrušit</a>
+    <td akce class='action-create' contenteditable='false'>
+      <a class="icon td-save"></a><a class="icon td-cancel"></a>
     </td>`
-    tr.obj = obj
+    row.obj = obj
 
-    let actionsDefault = tr.querySelectorAll('.action-default a')
-    actionsDefault[0].onclick = (e) => this.displayEdit(e.target.parentNode.parentNode)
-    actionsDefault[1].onclick = (e) => this.displayDelete(obj, e.target.parentNode.parentNode)
-    let actionsEdit = tr.querySelectorAll('.action-edit a')
-    actionsEdit[0].onclick = (e) => this.saveEdit(obj['id'], e.target.parentNode.parentNode)
-    actionsEdit[1].onclick = (e) => this.discardEdit(e.target.parentNode.parentNode)
-    let actionsCreate = tr.querySelectorAll('.action-create a')
-    actionsCreate[0].onclick = (e) => this.saveCreate(e.target.parentNode.parentNode)
-    actionsCreate[1].onclick = (e) => this.discardCreate(e.target.parentNode.parentNode)
+    let edit = (e) => {
+      if(parentHasTag(e.target, 'A')) return
 
-    return tr
+      row.ondblclick = null
+      this.displayEdit(row)
+
+      let escapeDiscard = (e) => {
+        if(e.key != 'Escape') return
+
+        window.removeEventListener('keydown', escapeDiscard)
+        discardEdit()
+      }
+      window.addEventListener('keydown', escapeDiscard)
+    }
+    let discardEdit = (e) => {
+      // e.cancelBubble = true
+      row.ondblclick = edit
+      this.discardEdit(row)
+    }
+
+    if(!create){
+      let actionsDefault = row.querySelectorAll('.action-default a')
+      row.ondblclick = edit
+      actionsDefault[0].onclick = (e) => {
+        // e.cancelBubble = true // to prevent calling edit // solved by checking parent tag A (above)
+        this.displayDelete(row)
+      }
+
+      let actionsEdit = row.querySelectorAll('.action-edit a')
+      actionsEdit[0].onclick = () => {
+        // e.cancelBubble = true
+        row.ondblclick = edit
+        this.saveEdit(row)
+      }
+      actionsEdit[1].onclick = discardEdit
+    }
+    else{
+      let actionsCreate = row.querySelectorAll('.action-create a')
+      actionsCreate[0].onclick = (e) => this.saveCreate(e.target.parentNode.parentNode)
+      actionsCreate[1].onclick = (e) => this.discardCreate(e.target.parentNode.parentNode)
+    }
+    
+    return row
   }
 
   //api
-  apiDelete(id, cb){
-    fetch(api + 'delete.php?id=' + id)
+  apiDelete(row, cb){
+    fetch(this.api + 'delete.php?id=' + row.obj['id'], {
+      method:'post',
+      body:JSON.stringify(row.obj)
+    })
     .then(r => {
       if(r.status == 200) {
         cb()
@@ -169,14 +224,21 @@ class MTable {
     
     formData.append('obj', JSON.stringify(row.obj))
     
-    fetch(api + 'post.php', {
+    fetch(this.api + 'post.php', {
       method:'post',
       body:formData
     })
-    .then(r => {
+    .then(async r => {
       if(r.status == 200) {
+        // retrieve id when creating new row
+        let json = await r.text()
+        try{
+          let robj = JSON.parse(json)
+          Object.assign(row.obj, robj)
+        } catch {}
+
         cb()
-        alert('Záznam ' + Object.values(obj)[1] + ' byl vytvořen')
+        alert(this.getObjName(row.obj, 'Záznam') + ' byl vytvořen')
       }
       else {
         if(cbError) cbError()
@@ -190,9 +252,7 @@ class MTable {
     
     formData.append('obj', JSON.stringify(row.obj))
 
-    console.log(formData.getAll('prilohy[]'))
-
-    fetch(api + 'edit.php', {
+    fetch(this.api + 'edit.php', {
       method:'post',
       body:formData
     })
@@ -208,24 +268,29 @@ class MTable {
   }
 
   // modification
+  displayCreate = () => {
+    let row = this.insertObjRow({}, true, 0)
+    row.classList.add('create')
+    this.formatRowEditBase(row)
+  }
   saveCreate(row){
     this.deformatRowEditBase(row, true)
-    this.apiPost(row, this.getRowsDisplay, () => this.formatRowEditBase(row))
+    this.apiPost(row, () => this.resetRow(row), () => this.formatRowEditBase(row))
   }
   discardCreate(row){
-    row.remove()
+    this.removeRow(row)
   }
-  getObjName(obj){
-    let name = 'záznam'
+  getObjName(obj, defaultt){
+    let name = defaultt
     if(obj['jmeno']) name = '"' + obj['jmeno'] + '"'
     else if(obj['nazev']) name = '"' + obj['nazev'] + '"'
     else if(obj['cislo']) name = '"' + obj['cislo'] + '"'
     
     return name
   }
-  displayDelete(obj, row){
-    if(window.confirm('Smazat ' + this.getObjName(obj))){
-      this.apiDelete(id, () => row.remove())
+  displayDelete(row){
+    if(window.confirm('Smazat ' + this.getObjName(row.obj, 'záznam'))){
+      this.apiDelete(row, () => this.removeRow(row))
     }
   }
   displayEdit(row){
@@ -234,46 +299,49 @@ class MTable {
 
     this.formatRowEditBase(row)
   }
-  saveEdit(id, row){
+  saveEdit(row){
     row.classList.remove('edit')
     this.deformatRowEditBase(row, true)
-    row.obj['id'] = id
-    this.apiPostEdit(row, () => {}, () => this.formatRowEditBase(row))
+    this.apiPostEdit(row, () => this.resetRow(row), () => {})
   }
   discardEdit(row){
     row.classList.remove('edit')
 
-    this.deformatRowEditBase(row, false, row.oldobj)
+    this.resetRow(row, row.oldobj)
   }
 
   // display
   displayRows = (objs) => {
-    this.table.clearCh()
+    this.tableBody.clearCh()
     for(let obj of objs){
-      this.insertRow(obj)
+      this.insertObjRow(obj)
     }
   }
-  insertRow(obj, index){
-    let tr = this.rowElement(obj)
-    tr.obj = obj
-    tr.cols = this.fetchColumns(tr)
-    this.table.insertBefore(tr, this.table.children[index ?? 0]);
+  insertObjRow(obj, create, index){
+    let row = this.rowElement(obj, create)
+    row.obj = obj
+    row.cols = this.fetchColumns(row)
 
-    if(this.rowCallback) this.rowCallback(tr, obj)
+    if(index >= 0){
+      this.tableBody.insertBefore(row, this.tableBody.children[index]);
+    }
+    else{ // default appends to end
+      this.tableBody.appendChild(row);
+    }
 
-    return tr
+    if(this.rowCallback) this.rowCallback(row, obj)
+
+    return row
   }
 }
 
-function selectMultiple(col, arr, optionsApi, valueName, textName){
-  col.clearCh().innerHTML = `
-  <div class='select-selected'></div>
+function selectMultiple(row, fieldName, optionsApi, valueName, textName){
+  row.cols[fieldName].clearCh().innerHTML = `
   <select id='select'>
     <option value=''>Vyberte</option>
   </select>
   `
-  let selected = col.querySelector('.select-selected')
-  let strSelect = col.querySelector('#select')
+  let strSelect = row.cols[fieldName].querySelector('#select')
 
   fetch(optionsApi)
   .then(r => {
@@ -286,10 +354,48 @@ function selectMultiple(col, arr, optionsApi, valueName, textName){
     }
   })
 
-  function selectStredisko(value, text) {
-    let selectedObj = {}
-    selectedObj[valueName] = value
-    selectedObj[textName] = text
+  if(!row.obj[fieldName]) row.obj[fieldName] = []
+  let selectContainer = new SelectContainer(strSelect, row.obj[fieldName], valueName, textName)
+
+  strSelect.onchange = () => {
+    let option = strSelect.options[strSelect.selectedIndex]
+    selectContainer.select(option.value, option.text)
+    strSelect.value = ''
+  }
+}
+
+class SelectContainer{
+  constructor(select, arr, valueName, textName){
+    this.container = document.createElement('div')
+    this.container.classList.add('select-selected')
+    select.insertAdjacentElement('beforebegin', this.container)
+
+    this.arr = arr
+    this.valueName = valueName
+    this.textName = textName
+    this.arrAdded = []
+    this.arrRemoved = []
+
+    // fill with initial array
+    this.reset()
+  }
+  reset = () => {
+    this.container.clearCh()
+    let arrClone = structuredClone(this.arr)
+    this.arr.length = 0 // clear the array
+    for(let obj of arrClone){
+      this.select(obj[this.valueName], obj[this.textName], true, obj)
+    }
+  }
+  select = (value, text, noPushAdded, selectedObj) => {
+    // check if object is already selected
+    if(this.arr.filter(o => o[this.valueName] == value && o[this.textName] == text).length > 0) return
+
+    if(!selectedObj){
+      selectedObj = {}
+      selectedObj[this.valueName] = value
+      selectedObj[this.textName] = text
+    }
 
     let selectedRow = document.createElement('div')
     selectedRow.classList.add('flex')
@@ -298,26 +404,90 @@ function selectMultiple(col, arr, optionsApi, valueName, textName){
     <div class='sgap gap-stretch-h'></div>
     <a>Smazat</a>
     `
-    arr.push(selectedObj)
+    this.arr.push(selectedObj)
+
+    let removed = this.arrRemoved.filter(o => o[this.valueName] == value && o[this.textName] == text)
+    if(removed.length > 0) {
+      this.arrRemoved.splice(this.arrRemoved.indexOf(removed[0]), 1)
+    }
+    else if(!noPushAdded) {
+      this.arrAdded.push(selectedObj)
+    }
 
     selectedRow.querySelector('a').onclick = () => {
-      let index = arr.indexOf(selectedObj)
-      arr.splice(index, 1);
+      let index = this.arr.indexOf(selectedObj)
+      this.arr.splice(index, 1)
+
+      index = this.arrAdded.indexOf(selectedObj)
+      if(index != -1) {
+        this.arrAdded.splice(index, 1)
+      }
+      else {
+        this.arrRemoved.push(selectedObj)
+      }
+
       selectedRow.remove()
     }
 
-    selected.appendChild(selectedRow)
-    strSelect.value = ''
+    this.container.appendChild(selectedRow)
   }
+}
+function textFormat(parent, obj, fieldName){
+  let txt = document.createElement('input')
+  txt.type = 'text'
+  txt.classList.add('txt')
+  if(!obj[fieldName]) obj[fieldName] = ''
+  txt.value = obj[fieldName]
+  txt.onchange = () => obj[fieldName] = txt.value
 
-  strSelect.onchange = () => {
-    let option = strSelect.options[strSelect.selectedIndex]
-    selectStredisko(option.value, option.text)
-  }
+  if(parent) parent.clearCh().appendChild(txt)
+  return txt
+}
+function dateFormat(parent, obj, dateName){
+  let date = document.createElement('input')
+  date.type = 'date'
+  if(!obj[dateName]) obj[dateName] = '0000-00-00'
+  date.value = obj[dateName]
+  date.onchange = () => obj[dateName] = date.value
 
-  let arrClone = structuredClone(arr)
-  arr.length = 0 // clear the array
-  for(let obj of arrClone){
-    selectStredisko(obj[valueName], obj[textName])
-  }
+  if(parent) parent.clearCh().appendChild(date)
+  return date
+}
+function selectFormat(row, colName, objValueName, objTextName, apiGet, valueName, textName){
+  let select = document.createElement('select')
+  fetch(apiGet)
+  .then(r => r.json())
+  .then(r => {
+    for(let obj of r){
+      let option = document.createElement('option')
+      option.value = obj[valueName]
+      option.innerText = obj[textName]
+
+      select.appendChild(option)
+
+      if(obj[valueName] == row.obj[objValueName] 
+        || !row.obj[objValueName] // if new row is created, select the first select option
+      ) {
+        row.obj[objValueName] = obj[valueName]
+        row.obj[objTextName] = obj[textName]
+        select.value = obj[valueName]
+      }
+    }
+
+    select.onchange = () => {
+      if(objTextName != '') row.obj[objTextName] = select.options[select.selectedIndex].innerText
+      row.obj[objValueName] = select.value
+    }
+  })
+  row.cols[colName].clearCh().appendChild(select)
+}
+function checkboxFormat(row, fieldName){
+  let input = document.createElement('input')
+  input.type = 'checkbox'
+
+  input.checked = row.obj[fieldName] == 1
+  row.obj[fieldName] = input.checked ? 1 : 0
+
+  input.onchange = () => row.obj[fieldName] = input.checked ? 1 : 0
+  row.cols[fieldName].clearCh().appendChild(input)
 }

@@ -9,7 +9,7 @@ $orderDirection = $_GET['order-direction'];
 $where = isset($_GET['from-id']) ? "where zpravy.id_jmeno = {$_GET['from-id']}" : '';
 
 $result = mysqli_query($link, "SELECT
-seznam.jmeno, zpravy.id, zpravy.datum, zpravy.text
+zpravy.id, seznam.jmeno, zpravy.datum, zpravy.text
 FROM zpravy
 JOIN seznam ON seznam.id_jmeno = zpravy.id_jmeno
 $where

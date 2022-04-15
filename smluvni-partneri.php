@@ -9,14 +9,8 @@
 	<script src='js/seznam.js' defer></script>
 	<script src='js/smluvni-partneri.js' defer></script>
 
-	<h2>Seznam smluvních partnerů</h2>
+	<h2 class="obsah-title">Seznam smluvních partnerů</h2>
 	<div class="obsah">
-		<div class='flex flex-center-v'>
-			<input id="search" class="txt ">
-			<div class='gap'></div>
-			<a id='new-button'>Nový partner</a>
-		</div>
-		<div class="gap"></div>
 		<table class="table">
 			<thead>
 				<tr>

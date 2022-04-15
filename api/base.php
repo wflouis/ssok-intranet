@@ -1,7 +1,7 @@
 <?php
 
 session_start();
-require '../../databaze.php';
+require dirname(__FILE__) . '/../databaze.php';
 
 if (!loggedIn()) {
   http_response_code(403);

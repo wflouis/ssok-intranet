@@ -8,7 +8,7 @@ function getRows(order, orderDirection) {
   return fetch(
     api + 'get.php' +
     '?stredisko=' + stredisko +
-    '&search=' + search.value +
+    '&search=' + mTable.search.value +
     '&order=' + order +
     '&order-direction=' + orderDirection
   )
@@ -30,36 +30,11 @@ function rowElementBase(user){
 
 // edit format
 function formatRowEdit(row, cols){
-  let internetF = document.createElement('input')
-  internetF.type = 'checkbox'
+  checkboxFormat(row, 'internet')
 
-  internetF.checked = row.obj['internet'] == 1
-  row.obj['internet'] = internetF.checked ? 1 : 0
+  selectFormat(row, 'stredisko', 'stredisko', '', 'api/strediska/get-basic.php', 'zkratka', 'zkratka')
 
-  cols['internet'].clearCh().appendChild(internetF)
-  internetF.onchange = () => row.obj['internet'] = internetF.checked ? 1 : 0
-
-  let strediskoStr = row.obj['stredisko'] ? row.obj['stredisko'] : '%'
-  console.log(strediskoStr)
-  row.obj['stredisko'] = strediskoStr
-  let strediskoF = document.createElement('select')
-  fetch('api/strediska/get-basic.php')
-  .then(r => {
-    if(r.status != 200) alertError(r, 'edit-get-strediska')
-    return r.json()
-  })
-  .then(r => {
-    for(let s of r){
-      let option = document.createElement('option')
-      option.value = s['zkratka']
-      option.innerText = s['zkratka']
-      strediskoF.appendChild(option)
-    }
-    strediskoF.value = strediskoStr
-    cols['stredisko'].clearCh().appendChild(strediskoF)
-    strediskoF.onchange = () => row.obj['stredisko'] = strediskoF.value
-  })
-
+  if(!row.obj['opravneni']) row.obj['opravneni'] = ''
   let opravneniStr = row.obj['opravneni']
   fetch(api + 'get-opravneni.php')
   .then(r => {
@@ -95,11 +70,13 @@ function deformatRowEdit(row, cols){
 }
 
 select.value = '%'
-let table = new MTable(api, ['stredisko', 'internet'])
+let mTable = new MTable(api, ['stredisko', 'internet'])
+mTable.setSearch()
+mTable.setNewButton('Nový uživatel')
 
-table.getRows = getRows
-table.rowElementBase = rowElementBase
-table.formatRowEdit = formatRowEdit
-table.deformatRowEdit = deformatRowEdit
+mTable.getRows = getRows
+mTable.rowElementBase = rowElementBase
+mTable.formatRowEdit = formatRowEdit
+mTable.deformatRowEdit = deformatRowEdit
 
-select.onchange = table.getRowsDisplay
+select.onchange = mTable.getRowsDisplay

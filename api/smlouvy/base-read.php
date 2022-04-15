@@ -1,6 +1,6 @@
 
 <?php
-require '../base.php';
+require dirname(__FILE__) . '/../base.php';
 
 if (!clearance()) {
   http_response_code(403);

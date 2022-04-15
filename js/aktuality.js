@@ -103,9 +103,10 @@ function deformatRowEdit(row, cols, save){
   return row
 }
 
-let table = new MTable(api, ['mail'])
+let mTable = new MTable(api, ['mail'])
+mTable.setNewButton('Nová zpráva')
 
-table.getRows = getRows
-table.rowElementBase = rowElementBase
-table.formatRowEdit = formatRowEdit
-table.deformatRowEdit = deformatRowEdit
+mTable.getRows = getRows
+mTable.rowElementBase = rowElementBase
+mTable.formatRowEdit = formatRowEdit
+mTable.deformatRowEdit = deformatRowEdit
