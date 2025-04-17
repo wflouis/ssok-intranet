@@ -9,7 +9,7 @@ let selectRok = document.getElementById('select-rok')
 let platnostOd = document.getElementById('input-od')
 let platnostDo = document.getElementById('input-do')
 
-function getRows(order, orderDirection) {
+function getRows(order, orderDirection, limit) {
   return fetch(
     api + 'get.php' +
     '?search=' + mTable.search.value +
@@ -19,7 +19,24 @@ function getRows(order, orderDirection) {
     '&platnost-od=' + platnostOd.value +
     '&platnost-do=' + platnostDo.value +
     '&order=' + order +
-    '&order-direction=' + orderDirection
+    '&order-direction=' + orderDirection +
+    (limit ? '&limit=' + limit : '')
+  )
+  .then(r => r.json())
+}
+
+function getRowsExport(order, orderDirection, limit) {
+  return fetch(
+    api + 'export.php' +
+    '?search=' + mTable.search.value +
+    '&typ=' + selectTyp.value +
+    '&stredisko=' + selectStredisko.value +
+    '&rok=' + selectRok.value +
+    '&platnost-od=' + platnostOd.value +
+    '&platnost-do=' + platnostDo.value +
+    '&order=' + order +
+    '&order-direction=' + orderDirection +
+    (limit ? '&limit=' + limit : '')
   )
   .then(r => r.json())
 }
@@ -58,7 +75,6 @@ function rowElementBase(obj){
   <td name="popis" class='td-wrap-s' contenteditable='false'>${obj['popis'] ?? ''}</td>
   <td name="datumUzavreni" contenteditable='false'>${obj['datumUzavreni'] ?? ''}</td>
   <td name="cena" class='td-right'>${obj['cena'] ?? ''}</td>
-  <td name="velikost" class='td-right'>${obj['velikost'] ?? ''}</td>
   <td name="strediska" class='td-maxwidth' contenteditable='false'><div class='td-maxheight'>${stringifyArray(obj['strediska'], 'zkratka')}</div></td>
   <td name="partneri" class='td-maxwidth' contenteditable='false'>${stringifyArray(obj['partneri'], 'nazev')}</td>
   <td name="rodneCislo" class='td-wrap'>${obj['rodneCislo'] ?? ''}</td>
@@ -71,16 +87,26 @@ function rowElementBase(obj){
 function rowCallback(tr, obj){
   // prilohy
   let prilohy = obj['prilohy'] ?? {}
-  let parent = tr.cols['prilohy'].firstChild
-  for(let i = 0; i < prilohy.length; i++){
+  let prilohyEl = tr.cols['prilohy'].firstChild
+  for(let i = 0; i < prilohy.length; i++) {
     let priloha = prilohy[i]
 
     let el = document.createElement('a')
     el.style.display = 'block'
     el.innerHTML = priloha['nazev']
-    el.href = prilohyPath + obj['id'] + '/' + priloha['nazev']
-    el.target = '_blank'
-    parent.appendChild(el)
+    el.onclick = () => downloadFile('api/smlouvy/readpriloha.php', obj['id'] + '/' + priloha['nazev'])
+    prilohyEl.appendChild(el)
+  }
+
+  let souvisejici = obj['souvisejici'] ?? []
+  for(let i = 0; i < souvisejici.length; i++){
+    if(i == 0) prilohyEl.insertAdjacentHTML('beforeend', '<span>Související smlouvy:</span><br>')
+    let smlouvaEl = document.createElement('a')
+    smlouvaEl.innerHTML = souvisejici[i]['cisloSmlouvy']
+    smlouvaEl.href = '/smlouvy.php?search=' + souvisejici[i]['cisloSmlouvy']
+    prilohyEl.appendChild(smlouvaEl)
+
+    if(i < souvisejici.length - 1) prilohyEl.appendChild(document.createElement('br'))
   }
 
   // predmet
@@ -95,13 +121,14 @@ function rowCallback(tr, obj){
   if(obj['id'] == null) return tr
 
   let zaruky = dropdown.content
-  
+
   let zarukyTabl = null
   dropdown.onReveal = () => {
     if(zarukyTabl) return
-    
+
     zarukyTabl = zarukyTable(obj['id'] ?? '')
     zaruky.appendChild(zarukyTabl.table)
+    zarukyTabl.setTitle('Záruky')
     zarukyTabl.setNewButton('Nová záruka')
   }
 
@@ -112,12 +139,10 @@ class RowDropdown {
     this.id = Math.random()
     tr.insertAdjacentHTML('afterend', `
     <tr>
-      <td colspan=100>
-        <div class='row-dropdown'>
+      <td colspan=100><div class='row-dropdown'>
           <div class='row-dropdown-button'><span>▼</span></div>
           <div id='${this.id}' class='row-dropdown-content hidden'></div>
-        </div>
-      </td>
+      </div></td>
     </tr>
     `)
 
@@ -201,6 +226,7 @@ function zarukyTable(idSmlouvy){
     let kontrolyTabl = kontrolyTable(idSmlouvy, obj['id_zaruky'])
     kontroly.appendChild(kontrolyTabl.table)
 
+    kontrolyTabl.setTitle('Kontroly')
     kontrolyTabl.setNewButton('Nová kontrola')
   }
 
@@ -283,7 +309,7 @@ function formatRowEdit(row, cols) {
 
   // faktura
   if(!row.obj['faktury']) row.obj['faktury'] = []
-  
+
   let newFaktura = {faktura:'',uhrazeno:'0000-00-00'}
   let div = document.createElement('div')
   let text = textFormat(null, newFaktura, 'faktura')
@@ -310,17 +336,16 @@ function formatRowEdit(row, cols) {
   row.formData = new FormData();
   row.obj['postPrilohy'] = []
   row.obj['deletePrilohy'] = []
-  
+
   let prilohyLabel = document.createElement('label')
-  prilohyLabel.classList.add('txt')
-  prilohyLabel.classList.add('button')
+  prilohyLabel.classList.add('txt','button','icon','input-file-icon')
   let prilohyInput = document.createElement('input')
   prilohyInput.type = 'file'
   prilohyInput.multiple = true
-  
+
   prilohyLabel.appendChild(prilohyInput)
   cols['prilohy'].clearCh().appendChild(prilohyLabel)
-  
+
   if(!row.obj['prilohy']) row.obj['prilohy'] = []
   let selectContainer = new SelectContainer(prilohyLabel, row.obj['prilohy'], 'velikost', 'nazev')
   selectContainer.arrAdded = row.obj['postPrilohy']
@@ -358,10 +383,26 @@ function deformatRowEdit(row, cols){
 
 selectStredisko.value = '%'
 let mTable = new MTable(api, ['predmet', 'popis', 'strediska', 'partneri', 'datumUzavreni', 'datumOd', 'datumDo', 'uhrazeno', 'faktury', 'prilohy', 'zaruky'])
+mTable.columns[2].click()
+mTable.columns[2].click()
 mTable.setSearch()
+
+let exportColumns = Array.from(mTable.columns)
+
+let predmet = document.createElement('td')
+predmet.setAttribute('column', 'predmet')
+predmet.innerText = 'Předmět'
+exportColumns.splice(1, 0, predmet)
+
+console.log(mTable.table.querySelector('thead td[column=partneri]'))
+exportColumns.splice(4, 0, mTable.table.querySelector('thead td[column=partneri]'))
+
+mTable.setExport(exportColumns)
+
 mTable.setNewButton('Nová smlouva')
 
 mTable.getRows = getRows
+mTable.getRowsExport = getRowsExport
 mTable.rowElementBase = rowElementBase
 mTable.removeRow = removeRow
 mTable.formatRowEdit = formatRowEdit
