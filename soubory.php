@@ -128,7 +128,7 @@
 
 				for(let f of e.target.files){
 					formData.append('files[]', f)
-					filePaths.push(dirPath + "/" + f.name)
+					filePaths.push(dirPath + f.name)
 				}
 				fetch('api/soubory/post.php?path=' + encodeURIComponent(dirPath) + "&createAktualita=" + (!!createAktualita).toString(), {
 					method:'post',
@@ -150,7 +150,7 @@
 
 					let formData = new FormData()
 					formData.append('obj', JSON.stringify({
-						text: "Byly nahrány nové soubory:\n\n" + filePaths.join('\n'),
+						text: "Byly nahrány nové soubory:\n\n" + filePaths.map(f => `<a onclick="downloadFile('api/soubory/readsoubor.php', '${f}')">${f}</a>`).join('\n'),
 					}))
 
 					fetch('api/aktuality/post.php', {
