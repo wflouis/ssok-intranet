@@ -1,7 +1,7 @@
 <?php
 require 'base-read.php';
 
-$result = mysqli_query($link, "SELECT id_typuSmlouvy as id, popis FROM typysmluv");
+$result = mysqli_query($link, "SELECT id_typuSmlouvy as id, popis FROM typySmluv");
 
 if($result){
     http_response_code(200);

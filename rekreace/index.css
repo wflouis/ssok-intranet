@@ -1,0 +1,94 @@
+body {
+	background-color : Silver;
+	FONT-FAMILY: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+textarea {
+	font-size : 12px;
+	FONT-FAMILY: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+p {
+	font-size : 12px;
+}
+td {
+	font-size : 12px;
+	padding-left : 5;
+	padding-right : 10;
+	cursor : default;
+}
+h1 {
+	font-size : 26px;
+	padding: 5 0 0 0;
+}
+h3 {
+	font-size : 18px;
+	padding-left : 5;
+}
+.zahlavi {
+	background-color : Navy;
+	color : White;
+	height : 20;
+}
+.zahlavi td {
+	width : 75;
+}
+.tabulka, .tabulka input, #objekt {
+	text-align : right;
+}
+.lichy {
+	background-color : #F5F5F5;
+}
+.sudy {
+	background-color : #DCDCDC;
+}
+.vybrany {
+	background-color : #B0C4DE;
+}
+.storno {
+	background-color : #FA8072;
+}
+.celkem td {
+	padding-right : 7;
+	font-weight : bold;
+}
+.aktOusko {
+	background-color : #F0F8FF;
+}
+.menu {
+	font-weight : bold;
+	background-image : url(obrazky/tlac_poz.gif);
+}
+.popup {
+	background-color : #F5F5F5;
+	display : none;
+	position: absolute;
+	left : 155;
+	filter: Alpha(Opacity=90);
+}
+#posun {
+	display : none;
+	color: #B40000;
+	height: 30;
+	cursor: hand;
+}
+#posun a, #posun img {
+	cursor: hand;
+	text-decoration: none;
+}
+#posun a.aktivni {
+	text-decoration: underline;
+}
+#posun a:visited {
+	color: #B40000;
+}
+#posun a:hover {
+	color: #FFFFFF;
+}
+#vyber table, #polozka table {
+	background-color : #F0F8FF;
+}
+#zam_j,#zam_c,#zad_j,#zad_c,#ciz_j,#ciz_c,#cid_j,#cid_c, .popis2 {
+	display: none;
+}
+#telo {
+	overflow : auto:
+}

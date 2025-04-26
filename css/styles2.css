@@ -20,7 +20,7 @@
 }
 body {
 	font-weight: 400;
-	color: #d5d5d5;
+	color: #eee;
 	font-size: 14px;
 	line-height: 20px;
 	width: 100%;
@@ -60,7 +60,7 @@ a:hover{
 
 h1, h2, h3, h4, h5, h6 {
 	margin-bottom: 10px;
-	font-weight: 500;
+	font-weight: 700;
 	line-height: 1.1;
 }
 /* Override the bootstrap defaults */
@@ -92,25 +92,25 @@ h6 {
 	top:0;
 	left:0;
 	right:0;
-  
+
   padding-top:10px;
   padding-bottom:10px;
   padding-right:var(--pagePadding);
   padding-left:var(--pagePadding);
-  
+
   display: flex;
   align-items: center;
-  
+
   height:var(--headerHeight);
   box-sizing:border-box;
-  
+
   /* background-image: url("../images/pozadi.jpg"); */
   background-image: radial-gradient(circle at center, var(--primaryColor), var(--primaryDark));
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
   /* opacity: .9; */
-  
+
   z-index: 1;
 }
 .header-logo{
@@ -142,10 +142,10 @@ h6 {
 }
 .header-menu{
   display:none;
-  
+
   padding:10px;
   padding-right:15px;
-  
+
   height:100%;
   align-items: center;
 }
@@ -171,7 +171,7 @@ h6 {
 	padding-top:15px;
   padding-left:var(--pagePadding);
   padding-right:var(--pagePadding);
-  
+
   display:flex;
 }
 
@@ -257,11 +257,11 @@ input[type=file]{
 	padding: 7.5px 12px;
     margin:5px;
     box-sizing: border-box;
-  
+
 	font-size: 12px;
     color: #ffffff;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  
+
 	background-color: var(--primaryColor);
 	background-image: linear-gradient(to bottom, var(--primaryColor), var(--primaryDarkLight));
 
@@ -282,8 +282,9 @@ input[type=file]{
 }
 
 .search-text{
-	max-height: 15vh;
+/*	max-height: 15vh; */
 	overflow-y:auto;
+	margin-bottom: 10px;
 }
 .flex{
   display:flex;
@@ -296,10 +297,8 @@ input[type=file]{
 	border: 1px solid var(--primaryColor);
 	border-radius: 5px;
 	background-color: var(--gray);
-	opacity: 0.8;
 	margin: 4px 0;
 	color: white;
-
 	overflow:hidden;
 }
 .zprava div {
@@ -328,31 +327,38 @@ thead {
 thead td {
 	padding:5px 10px;
 	user-select: none;
+	white-space: nowrap;
 }
 thead td.sort-asc:after {
-	font-family: FontAwesome; 
+	font-family: FontAwesome;
 	content: "\f15d";
 	margin-left:5px;
 }
 thead td.sort-desc:after {
-	font-family: FontAwesome; 
-	content: "\f15e"; 
+	font-family: FontAwesome;
+	content: "\f15e";
 	margin-left:5px;
 }
 thead td.sort-num-down:after {
-	font-family: FontAwesome; 
-	content: "\f163"; 
+	font-family: FontAwesome;
+	content: "\f163";
 	margin-left:5px;
 }
 thead td.sort-num-up:after {
-	font-family: FontAwesome; 
+	font-family: FontAwesome;
 	content: "\f162";
 	margin-left:5px;
 }
 
-table:not(#folders) tbody td {
+table tbody td {
 	border: 0;
 	padding: 4px 8px;
+	font-size: 14px;
+	vertical-align: middle;
+}
+table#folders tbody td {
+	border: 0;
+	padding: 2px 8px;
 	vertical-align: middle;
 }
 #folders tbody tr:hover, #zaruky tbody tr:hover {
@@ -400,7 +406,7 @@ table img {
   text-align:right;
 }
 .table-filename{
-	word-break:break-all;
+/*	word-break:break-all; */
 }
 
 tr{
@@ -421,7 +427,7 @@ tr.edit > td, tr.create > td{
 	padding-bottom:20px;
 }
 td{
-  white-space: nowrap;
+/*  white-space: nowrap; */
 }
 
 #strediska td[name='ostatni']{
@@ -500,7 +506,6 @@ td{
 .icon{
 	width:30px;
 	height:30px;
-	margin:10px 0;
 
 	display:flex;
 	justify-content:center;
@@ -529,9 +534,13 @@ td{
 	font-size: 1.5em;
 }
 
+.soubory-search-container{
+	height:50px;
+}
 .input-file-icon{
 	width: 50px;
 	height:50px;
+	margin-left:5px;
 }
 .input-file-icon input{
 	display:none;
@@ -539,4 +548,12 @@ td{
 .input-file-icon::after{
 	content:'\f15b';
 	font-size: 1.5em;
+}
+
+.table-text{
+	padding:10px 15px;
+}
+
+.nowrap{
+  white-space: nowrap;
 }

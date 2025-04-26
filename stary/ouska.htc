@@ -1,0 +1,18 @@
+<component>
+	<PUBLIC:ATTACH EVENT="onclick" ONEVENT="klik(element)" />
+	<script>
+	function klik(element) { 
+	  if (element.parentElement!=null) {
+		  radek= element.parentElement.id.substr(1,10);
+		  if (radek>0) 
+	   		  rozbal('d'+radek);
+	  }
+	  switch (element.id) {
+		  case 'ousko1': ukaz('oknoSeznam',element.id); break;
+		  case 'ousko2': ukaz('oknoDetail',element.id); break;
+		  case 'ousko3': ukaz('oknoZaruky',element.id); break;
+	  }
+	}
+	</script>
+</component>
+

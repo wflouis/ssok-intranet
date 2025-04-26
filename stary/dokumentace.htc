@@ -1,0 +1,14 @@
+<PUBLIC:COMPONENT>  
+	<PUBLIC:ATTACH EVENT="onclick" FOR="element" ONEVENT="stahnout()" />  
+	<script>
+		function stahnout() {
+	  		if (element.parentNode.parentNode.id!="") {
+				okno = window.document.getElementById("odeslat");
+				okno.style.display="block";
+				okno.style.top=event.clientY;
+				okno.style.left=window.event.clientX-250; 
+				window.document.getElementById("id_vr").value=element.parentNode.parentNode.id;
+			}
+		}
+	</script>
+</PUBLIC:COMPONENT>    

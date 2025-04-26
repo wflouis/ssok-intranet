@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html dir="ltr" lang="cs"> 
+<html dir="ltr" lang="cs">
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,6 +16,13 @@
 
 		// setInterval(function(){location.reload(true);}, 2000);
 	</script>
+	<script>
+	if(document.documentMode){
+		window.onload = function() {
+			document.body.innerHTML = "<div style='height:90vh;padding:0 5vw;display:flex;justify-content:center;align-items:center;'><h1 style='background-color:var(--primaryColor);border-radius:10px;padding:10px 15px;'>Nová verze intranetu nelze spustit v Internet Exploreru, použijte moderní prohlížeč, nejlépe Firefox, v případě naprosté nouze můžete mimořádně využít i Chrome.</h1></div>";
+		}
+	}
+	</script>
 	<link href="images/logo.png" rel="icon" />
 </head>
 <body>
@@ -30,12 +37,12 @@
     ?>
     <img class="header-logo" src="images/logoSede.png" alt="Správa silnic Olomouckého kraje">
     <div class="sgap"></div>
-    <?php 
+    <?php
     if(isset($homePage)){
       $result = mysqli_query($link,"SELECT svatek FROM svatky WHERE mesic = '".date("n")."' and den = '".date("d")."'");
       $radek = mysqli_fetch_assoc($result);
       $svatek = $radek["svatek"];
-      
+
       echo "
       <div class='header-center'>
         <div id='AktCas' class='header-time'></div>
@@ -49,7 +56,7 @@
         <i class="fa fa-user-circle fa-2x"></i>
         <span class="header-account-name"><?php echo (empty($_SESSION["id_jmeno"])?"Nepřihlášen":$_SESSION["jmeno"]); ?></span>
       </div>
-      <?=(isset($_SESSION['id_jmeno']) ? "<a class='header-logout icon logout-icon' href='logout.php'></a>" : '')?>
+      <?=(isset($_SESSION['id_jmeno']) ? "<a title='Odhlásit se' class='header-logout icon logout-icon' href='logout.php'></a>" : '')?>
     </div>
   </div>
   <div class="page">

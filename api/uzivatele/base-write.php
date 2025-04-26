@@ -15,15 +15,15 @@ function clearance(){
 function postOpravneni($userId, $opravneniStr){
   global $link;
 
-  mysqli_query($link, "delete from pristprava where id_jmeno = $userId");
+  mysqli_query($link, "delete from opravneni where id_jmeno = $userId");
 
   if(empty($opravneniStr)) return true;
   $opravneni = str_split($opravneniStr);
 
   foreach($opravneni as $o) {
-    $ok = mysqli_query($link, "insert into pristprava (id_jmeno, id_modulu, prava) values(
+    $ok = mysqli_query($link, "insert into opravneni (id_jmeno, id_modulu, prava) values(
         $userId,
-        (select id_modulu from moduly where zkratka = '$o'),
+        (select id_modulu from opravneni_moduly where zkratka = '$o'),
         1
       )
     ");

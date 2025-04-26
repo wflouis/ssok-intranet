@@ -1,0 +1,198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1250">	
+	<LINK href="index.css" type=text/css rel=stylesheet>
+	<script language="JavaScript" src="index.js"></script>
+	<script language="JavaScript" src="poukaz.js"></script>
+	<script>
+		sazby = {
+c_zam_pou : '28.57',
+c_zam_dph : '1.43',
+c_zam_rek : '0.00',
+c_zad_pou : '14.29',
+c_zad_dph : '0.71',
+c_zad_rek : '0.00',
+c_ciz_pou : '66.67',
+c_ciz_dph : '3.33',
+c_ciz_rek : '0.00',
+c_cid_pou : '33.33',
+c_cid_dph : '1.67',
+c_cid_rek : '0.00'
+		}
+</script>
+</head>
+<body 
+onload="prepni('o2')";>
+<h3 id=nadpisS style="display: none;">Seznam rekreačních poukazů</h3>
+<h3 id=nadpisP style="display: none;">Rekreační poukaz č. Je07001</h3>
+<table cellpadding="0" cellspacing="0"><tr><td>
+<table id=posun align="right"><tr><td onClick="navigace()">
+ <a class=aktivni href="#">1</a></td></tr></table>
+<table class=ouska cellpadding="0" cellspacing="0" width="160" onClick="prepni(event.srcElement.id);"><tr align="center" style="font-weight : bold;"><td id=o1 class=pasOusko height="30">Seznam</td><td id=o2 class=pasOusko>Poukaz</td></tr></table>
+<form action="poukazy.php" method="post" name="vyber" id="vyber" style="margin: 0; display : none;">
+<table cellpadding="1" cellspacing="1" class=tabulka onMouseOver="rozsvit()" onMouseOut="zhasni()" onClick="nacti('poukaz')">
+<tr class=zahlavi style="text-align : left;"><td>Poukaz <img src="obrazky/dolu.gif"></td><td>od </td><td>do </td><td style="width:180;">jméno </td><td>osob</td><td style="width:85">cena</td></tr>
+<tr class="lichy vybrany" id="0107001">
+<td>Je07001</td>
+<td>23.06.2007</td>
+<td>30.06.2007</td>
+<td align="left">Vor Zden</td>
+<td>2/0</td>
+<td>420.00 Kč</td></tr>
+</table><br>
+<div align="right" onClick="proved('vyber')">
+<input type="hidden" name="sloupec">
+<input type="hidden" name="strana">
+<input type="hidden" name="akce">
+<button name="novy">Nový</button>
+</div>
+</form>
+
+<form action="poukazy.php" method="post" name="polozka" id="polozka" onKeyDown="enter()" onKeyPress="return cisla('.')" style="margin: 0; display : none;">
+<table cellpadding="0" cellspacing="0">
+	<tr><td colspan="2" height="8"></td></tr>
+	<tr><td>
+		<table cellpadding="0" cellspacing="0">
+			<tr><td>Objekt:</td><td>
+			<select name="n_objektu" style="width:307" onchange="getObj('objekt').value = getObj('n_objektu').options(getObj('n_objektu').value-1).id; getObj('tarif').click()" disabled>
+			<script>getObj('n_objektu').value = getObj('1').value</script>
+			</select>
+			<input type="hidden" name="poukaz" value="1">
+			<input type="hidden" name="objekt" value="1"></td></tr>
+			<tr><td width="100">Zaměstnanec:</td><td><input type="text" name="nazev_zam" size="42" maxlength="40" onchange="top.zmeneno = true;" value="Vor?? Zden"></td></tr>
+			<tr><td>Cizí:</td><td><input type="text" name="nazev_ciz" size="42" maxlength="40" onchange="top.zmeneno = true;" value=""></td></tr>
+		</table>
+	</td>
+	<td>
+		<table class=tabulka cellpadding="0" cellspacing="0">
+		<tr><td colspan="3" height="25" align="left">Počet osob:</td><td colspan="2">z toho bez poplatku</td></tr>
+		<tr><td>dospělí:</td><td><input type="text" name="osob_zam" size="3" maxlength="2" onchange="prepocti()" value="2"></td>
+			<td>děti:</td><td><input type="text" name="osob_zad" size="3" maxlength="2" onchange="prepocti()" value="0"></td>
+			<td><input type="text" name="inv_zam" size="3" maxlength="2" onchange="prepocti()" value="0"><input type="hidden" name="inv_zad" value="0"></td></tr>
+		<tr><td>dospělí:</td><td><input type="text" name="osob_ciz" size="3" maxlength="2" onchange="prepocti()" value="0"></td>
+			<td>děti:</td><td><input type="text" name="osob_cid" size="3" maxlength="2" onchange="prepocti()" value="0"></td>
+			<td><input type="text" name="inv_ciz" size="3" maxlength="2" onchange="prepocti()" value="0"><input type="hidden" name="inv_cid" value="0"></td></tr>
+		</table>
+	</td></tr>
+	<tr><td colspan="2" height="5"></td></tr>
+</table><br>
+
+<table cellpadding="0" cellspacing="0" width="605">
+<tr><td colspan="4" height="8"></td></tr>
+<tr><td width="100">Jméno:</td><td><input type="text" name="jmeno" size="22" maxlength="20" onchange="top.zmeneno = true;" value="Zden"></td>
+	<td>příjmení:</td><td><input type="text" name="prijmeni" size="30" maxlength="30" onchange="top.zmeneno = true;" value="Vor"></td></tr>
+<tr><td>Bydliště:</td><td colspan="3"><input type="text" name="bydliste" size="65" maxlength="60" onchange="top.zmeneno = true;" value="bla"></td></tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="605">
+<tr><td width="100">Nástup:</td><td><input type="text" class=cislo name="nastup" size="10" maxlength="10" onchange="prepocti()" value="23.06.2007"></td>
+	<td>ukončení:</td><td><input type="text" class=cislo name="konec" size="10" maxlength="10" onchange="prepocti()" value="30.06.2007"></td>
+	<td>pokoj:</td><td><input type="text" name="pokoj" size="12" maxlength="10" onchange="top.zmeneno = true;" value="290"></td><td></td></tr>
+	<tr><td colspan="6" height="5"></td></tr>
+</table><br>
+<table class=tabulka cellspacing="0" cellpadding="0" width="720">
+<tr class=zahlavi>
+    <td></td>
+    <td style="width:50">počet osob</td>
+    <td style="width:50">počet nocí</td>
+    <td>cena za položku</td>
+    <td>DPH</td>
+    <td>rekreační poplatek</td>
+    <td>celkem</td>
+</tr>
+<tr id=zam_j class=lichy>
+    <td align="left">zaměstnanec za jednotku</td>
+    <td></td>
+    <td></td>
+    <td>28.57 Kč</td>
+    <td>1.43 Kč</td>
+    <td>0.00 Kč</td>
+    <td>30.00 Kč</td>
+</tr>
+<tr id=zam_c class=sudy>
+    <td align="left">zaměstnanec</td>
+    <td id=t_osob_zam></td>
+    <td id=t_noci_zam></td>
+    <td id=t_pou_zam></td>
+    <td id=t_dph_zam></td>
+    <td id=t_rek_zam></td>
+    <td id=t_cel_zam></td>
+</tr>
+<tr id=zad_j class=lichy>
+    <td align="left">děti za jednotku</td>
+    <td></td>
+    <td></td>
+    <td>14.29 Kč</td>
+    <td>0.71 Kč</td>
+    <td>0.00 Kč</td>
+    <td>15.00 Kč</td>
+</tr>
+<tr id=zad_c class=sudy>
+    <td align="left">děti</td>
+    <td id=t_osob_zad></td>
+    <td id=t_noci_zad></td>
+    <td id=t_pou_zad></td>
+    <td id=t_dph_zad></td>
+    <td id=t_rek_zad></td>
+    <td id=t_cel_zad></td>
+</tr>
+<tr id=ciz_j class=lichy>
+    <td align="left">cizí - dopělí za jednotku</td>
+    <td></td>
+    <td></td>
+    <td>66.67 Kč</td>
+    <td>3.33 Kč</td>
+    <td>0.00 Kč</td>
+    <td>70.00 Kč</td>
+</tr>
+<tr id=ciz_c class=sudy>
+    <td align="left">cizí - dospělí</td>
+    <td id=t_osob_ciz></td>
+    <td id=t_noci_ciz></td>
+    <td id=t_pou_ciz></td>
+    <td id=t_dph_ciz></td>
+    <td id=t_rek_ciz></td>
+    <td id=t_cel_ciz></td>
+</tr>
+<tr id=cid_j class=lichy>
+    <td align="left">cizí - děti za jednotku</td>
+    <td></td>
+    <td></td>
+    <td>33.33 Kč</td>
+    <td>1.67 Kč</td>
+    <td>0.00 Kč</td>
+    <td>35.00 Kč</td>
+</tr>
+<tr id=cid_c class=sudy>
+    <td align="left">cizí - děti</td>
+    <td id=t_osob_cid></td>
+    <td id=t_noci_cid></td>
+    <td id=t_pou_cid></td>
+    <td id=t_dph_cid></td>
+    <td id=t_rek_cid></td>
+    <td id=t_cel_cid></td>
+</tr>
+<tr class=celkem>
+    <td align="left" height="20">Celkem:</td>
+    <td></td>
+    <td></td>
+    <td id=t_pou_cel></td>
+    <td id=t_dph_cel></td>
+    <td id=t_rek_cel></td>
+    <td id=t_cel_cel></td>
+</tr>
+</table>
+<h2>K úhradě: <span id=kuhrade>0,00</span> Kč</h2>
+<div id=t_poukaz align="right" onClick="proved('polozka')">
+<input type="hidden" name="akce">
+<button name="ulozit">Uložit</button>
+<button name="tisk">Vytisknout</button>
+<button name="tarif">Aktualizovat tarif</button>
+<button name="stornovat">Stornovat</button>
+</div>
+Text do poukazu:<br>
+<textarea style="width:720" cols="80" rows="5" onchange="top.zmeneno = true;" id=poznamka name="poznamka">bla</textarea>
+</form>
+</td></tr></table>
+</body>
+</html>

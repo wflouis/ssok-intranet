@@ -9,12 +9,13 @@ values (?,?,?)
 ");
 $stmt->bind_param('ssi', $obj['zkratka'], $obj['nazev'], $obj['poradi']);
 echo $stmt->error;
+echo mysqli_error($link);
 
 if($stmt->execute()) {
     $id = $stmt->insert_id;
     echo "{\"id\":$id}";
 
-    postOstatni($id, $obj['ostatni']);
+    postOstatni($id, $obj['zkratka'], $obj['ostatni']);
 
     http_response_code(200);
 }

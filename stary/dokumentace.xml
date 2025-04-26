@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<bindings xmlns="http://www.mozilla.org/xbl">
+  <binding id="dokumentace">
+    <handlers>
+       <handler event="click"> 
+		  <![CDATA[
+		  		if (this.parentNode.parentNode.id!="") {
+					okno = getElementById("odeslat");
+					okno.style.display="block";
+					okno.style.top=event.clientY;
+					okno.style.left=event.clientX-250;
+					getElementById("id_vr").value=this.parentNode.parentNode.id;
+				}
+		 ]]>
+      </handler>
+    </handlers>
+  </binding>
+</bindings>

@@ -7,14 +7,14 @@ $order = empty($_GET['order']) ? 'jmeno' : $_GET['order'];
 $orderDirection = empty($_GET['order-direction']) ? 'desc' : $_GET['order-direction'];
 
 $stmt = mysqli_prepare($link, "
-select id_jmeno as id, jmeno, funkce, email, telefon, stredisko, internet,
-  (select group_concat(moduly.zkratka separator '')
-  from pristprava
-  join moduly on moduly.id_modulu = pristprava.id_modulu
-  where pristprava.id_jmeno = seznam.id_jmeno) as opravneni
+select id_jmeno as id, jmeno, funkce, email, telefon, mobil, stredisko, internet,
+  (select group_concat(opravneni_moduly.zkratka separator '')
+  from opravneni
+  join opravneni_moduly on opravneni_moduly.id_modulu = opravneni.id_modulu
+  where opravneni.id_jmeno = seznam.id_jmeno) as opravneni
 from seznam
 where stredisko like ?
-  and lower(jmeno) like lower(?)
+  and jmeno COLLATE utf8_unicode_ci like ?
 order by $order $orderDirection
 ");
 echo mysqli_error($link);

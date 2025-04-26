@@ -2,14 +2,16 @@
 	$homePage = true;
 	include 'over.php';
 	include "hlava.php";
-	include "nabidka.php"; 
+	include "nabidka.php";
 ?>
 
 <div>
+	<script>let writePermission = <?=(strpos($_SESSION['prava'], 'M') !== false ? 'true' : 'false')?></script>
 	<script src='js/seznam.js' defer></script>
 	<script src='js/zaruky.js' defer></script>
 
 	<h2 class="obsah-title">Seznam záruk</h2>
+	<?=tableText()?>
 	<div class="obsah">
 		<div class='flex'>
 			<select id="select-stredisko">
@@ -40,17 +42,17 @@
 			</select>
 		</div>
 		<div class='flex'>
-			<span class='flex flex-center-v'>od: </span><input id='input-od' type='date' <?php
-				if(isset($_GET['alert'])){
-					echo 'value=' . date('Y-m-d');
-				}
+			<span class='flex flex-center-v'>Končící od: </span><input id='input-od' type='date'
+			<?php
+				echo 'value=' . date('Y-m-d');
 			?>>
-			<div class='gap'></div>
-			<span class='flex flex-center-v'>  do: </span><input id='input-do' type='date' <?php
-				
+			<!-- <div class='gap'></div> -->
+			<!-- <span class='flex flex-center-v'>  do: </span> -->
+			<input style='display:none' id='input-do' type='date' <?php
+
 			?>>
 		</div>
-		
+
 		<table id='zaruky' class="table">
 			<thead>
 				<tr>

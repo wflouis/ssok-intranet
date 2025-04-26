@@ -1,10 +1,10 @@
 <?php
 	$homePage = true;
-	
+
 	include "over.php";
-	include "hlava.php"; 
+	include "hlava.php";
 	$_GET["modul"] = 1;
-	include "nabidka.php"; 
+	include "nabidka.php";
 
 	include 'zprava.php';
 ?>

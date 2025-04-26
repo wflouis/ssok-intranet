@@ -1,0 +1,28 @@
+BODY {
+	margin: 20px;
+}
+.levySl {	
+	width: 6em;
+	float: left;
+	clear: left;
+	padding: 5 0 0 0 px;
+}
+.vlevo {	
+	float: left;
+}
+.stredSl {
+	width: 4em;
+	float: left;
+}
+#telKUOK {
+	position: absolute;
+	top: 20;
+	left: 305;
+	font-size: 12px;
+}
+#telSSOK {
+	position: absolute; 
+	top: 40; 
+	left: 305; 
+	font-size: 12px;
+}

@@ -22,9 +22,9 @@ $orderDirection = empty($_GET['order-direction']) ? 'desc' : $_GET['order-direct
 $stmt = mysqli_prepare($link, "SELECT zaruky.id_smlouvy, smlouvy.cisloSmlouvy, predmetZaruky, datumZarukyOd, datumZarukyDo, seznam.jmeno as zadavatel,
 (
     select GROUP_CONCAT(seznam_str.zkratka SEPARATOR '\n')
-    from smlouvystr
-    join seznam_str on seznam_str.id_str = smlouvystr.id_strediska
-    where smlouvystr.id_smlouvy = zaruky.id_smlouvy
+    from smlouvyStr
+    join seznam_str on seznam_str.id_str = smlouvyStr.id_strediska
+    where smlouvyStr.id_smlouvy = zaruky.id_smlouvy
 ) as strediska,
 (
     select group_concat(concat(datumKontroly, ' ', vysledekKontroly, '\nodstranění: ', datumOdstraneni) separator '\n\n')
@@ -39,10 +39,10 @@ left join seznam on seznam.id_jmeno = zaruky.zadal
 where 
 (smlouvy.cisloSmlouvy like ? or predmetZaruky collate utf8_general_ci like ? )
 and EXISTS (
-    select seznam_str.zkratka from smlouvystr
-    join seznam_str on seznam_str.id_str = smlouvystr.id_strediska
+    select seznam_str.zkratka from smlouvyStr
+    join seznam_str on seznam_str.id_str = smlouvyStr.id_strediska
     where
-        smlouvystr.id_smlouvy = zaruky.id_smlouvy and
+        smlouvyStr.id_smlouvy = zaruky.id_smlouvy and
         seznam_str.zkratka like ?
 )
 and (seznam.id_jmeno = ? or ? = '')

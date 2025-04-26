@@ -2,14 +2,16 @@
 	$homePage = true;
 	include 'over.php';
 	include "hlava.php";
-	include "nabidka.php"; 
+	include "nabidka.php";
 ?>
 
 <div>
+	<script>let writePermission = <?=(strpos($_SESSION['prava'], 'M') !== false ? 'true' : 'false')?></script>
 	<script src='js/seznam.js' defer></script>
 	<script src='js/smluvni-partneri.js' defer></script>
 
 	<h2 class="obsah-title">Seznam smluvních partnerů</h2>
+	<?=tableText()?>
 	<div class="obsah">
 		<table class="table">
 			<thead>

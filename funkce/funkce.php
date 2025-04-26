@@ -1,4 +1,5 @@
 <?php
+ini_set('default_charset', 'windows-1250');
 session_start();
 
 function maPristup($modul="X",$castecny=false) {
@@ -29,7 +30,7 @@ function maPristup($modul="X",$castecny=false) {
 		$_SESSION["citace"] = array ('smlouvy');
 		$_SESSION["akce_polozky"] = array ('id_akce', 'id_polozky', 'predmet', 'nedodelky', 'prevzeti', 'zaruka', 'konec_zaruky', 'overil', 'stav');
 		$_POST["zadano"] = date('Y-m-d H:i:s',time());
-		$_SESSION["spravce"] = "<a href=\"mailto: ulmann@scomeq.cz\">sprï¿½vce aplikace</a>";
+		$_SESSION["spravce"] = "<a href=\"mailto: ulmann@scomeq.cz\">správce aplikace</a>";
 		return true;
 	} 
 	if ($castecny) 
@@ -56,7 +57,7 @@ function uloz($tabulka, &$data, &$klic=0) {
 			 else
 	         	$sloupce  .= ",".$index."='".$hodnota."'" ;
 	   $query = "UPDATE ".$tabulka." SET ".substr($sloupce,1)." WHERE ".substr($podminka,3)."";
-	   $result = mysqli_query($query); 
+	   $result = mysqli_query($_SESSION["link"],$query); 
    } else { 
 	   $hodnoty = "";
 	   $sloupce = "";
@@ -67,11 +68,11 @@ function uloz($tabulka, &$data, &$klic=0) {
 		 	 $hodnoty .= "','".$hodnota ;
 	  	  } 
 	   $query   = "INSERT INTO ".$tabulka." (".substr($sloupce,1).") VALUES ('".substr($hodnoty,3)."')";
-	   $result = mysqli_query($query);
-	   $klic = mysqli_insert_id();
+	   $result = mysqli_query($_SESSION["link"],$query);
+	   $klic = mysqli_insert_id($_SESSION["link"]);
    } 
    if ($result == null) {
- 	  echo "<br>Nepodaï¿½ilo se uloï¿½it zï¿½znam!!!<br>".$query."<br>";
+ 	  echo "<br>Nepodaøilo se uložit záznam!!!<br>".$query."<br>";
 	  return false;
    } //echo $query;
    return true;
@@ -81,9 +82,9 @@ function smaz($tabulka, $pole, $klic, $limit=0) {
    $query  =  "DELETE FROM ".$tabulka." WHERE ".$pole." = '".$klic."'";
    if ($limit>0)
 	   $query  .= " LIMIT $limit";
-   $result = mysqli_query($query);
+   $result = mysqli_query($_SESSION["link"],$query);
    if ($result = 0) {
- 	  echo "<br>Nepodaï¿½ilo se uloï¿½it zï¿½znam!!!<br>".$query."<br>";
+ 	  echo "<br>Nepodaøilo se uložit záznam!!!<br>".$query."<br>";
 	  return false;
    }
    return true;
@@ -96,7 +97,7 @@ function povoleny($file,$dir) {
         return true;
 	$pripony = array("doc","dot","xls","xlsx","docx","jpg", "gif", "tif", "txt","zip","pdf","htm","html","avi","pps","ppt","pptx");
     foreach ($pripony as $pripona) {
-           if (eregi("\.". $pripona ."$", $file)) {
+           if (preg_match("/\.". $pripona ."$/i", $file, $matches)) {
                return true;
            }
     }
@@ -120,7 +121,7 @@ function obsahAdr($dir,$podle,$smer,$najit="",$selekce="") {
 		   if (povoleny($file,$dir)) {
 		   	   if (!empty($najit) and is_dir($dir."/".$file)) 
 				   obsahAdr($dir."/".$file,"","nepis",$najit); 
-		  	   if (empty($najit) or eregi($najit,$file)) {
+		  	   if (empty($najit) or preg_match("/".$najit."/i",$file,$matches)) {
 			       $Nazev[$i] = $file;
 			       $Zmena[$i] = date("Y-m-d",filemtime($dir."/".$file));
 				   if (is_file($dir."/".$file)) {
@@ -155,14 +156,15 @@ function obsahAdr($dir,$podle,$smer,$najit="",$selekce="") {
 			   echo "..</td><td></td><td align=\"right\"></td></tr>\n";
 		  	   $i += 1;
 		}
-		while (list ($key, $value) = each ($Serazene)) { 
+
+		foreach ($Serazene as $key => $value) { 
 			if (strrpos(strrchr($dir, "/"),"(dle strediska)")==false || empty($_SESSION["dleStrediska"]) || strpos($Nazev[$key],$_SESSION["dleStrediska"]) || strpos($Nazev[$key],"reditelstvi")) {		
 			    if ($i%2==0)
 				   echo "<tr><td name=\"".(isset($Cesta[$i])?$Cesta[$i]:"")."\">";
 				else
 				   echo "<tr class=suda><td name=\"".(isset($Cesta[$i])?$Cesta[$i]:"")."\">";
 				if ($podle == 1) {
-				    echo "<img src=\"img/".obrazek($dir."/".$value).".gif\" border=\"0\"> ";
+				    echo "<img src=\"img/".obrazek($dir."/".$value).".gif\" border=\"0\"> "; 
 				    echo "$value</td><td>".DateEnCz($Zmena[$key])."</td><td align=\"right\">".$Velikost[$key]."</td></tr>\n";
 				} else {
 				    echo "<img src=\"img/".obrazek($dir."/".$Nazev[$key]).".gif\" border=\"0\"> ";
@@ -213,7 +215,7 @@ function DbToPOST(&$radek) {
 }
 function getDBSet($tabulka,$pole) {
     $sql  = "SHOW COLUMNS FROM $tabulka LIKE '$pole'";
-	$ret  = mysqli_query($sql);
+	$ret  = mysqli_query($_SESSION["link"],$sql);
     $line = mysqli_fetch_assoc($ret);
     $set  = $line['Type'];
     $set  = substr($set,5,strlen($set)-7); 

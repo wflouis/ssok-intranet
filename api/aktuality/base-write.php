@@ -1,5 +1,9 @@
 
 <?php
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
 require '../base.php';
 
 require '../../mailer/PHPMailer.php';
@@ -33,14 +37,15 @@ function sendEmails($obj){
   $usersFormatted = "'" . join("','", $users) . "'";
   $strediskaFormatted = "'" . join("','", $strediska) . "'";
 
-  $sql = "SELECT distinct email from seznam where ";
-  
+  $sql = "SELECT distinct email from seznam where email > '' ";
+
   if(count($strediska) > 0 && count($users) > 0)
-    $sql .= "stredisko IN ($strediskaFormatted) OR id_jmeno IN ($usersFormatted) ";
+    $sql .= "and (stredisko IN ($strediskaFormatted) OR id_jmeno IN ($usersFormatted)) ";
   else if(count($strediska) > 0)
-    $sql .= "stredisko IN ($strediskaFormatted) ";
+    $sql .= "and stredisko IN ($strediskaFormatted) ";
   else if(count($users) > 0)
-    $sql .= "id_jmeno IN ($usersFormatted) ";
+    $sql .= "and id_jmeno IN ($usersFormatted) ";
+  else $sql .= "and false";
 
   $result = mysqli_query($link, $sql);
   echo mysqli_error($link);
@@ -50,31 +55,43 @@ function sendEmails($obj){
     $addresses[] = $row['email'];
   }
 
-  // sendEmail($body, $addresses);
+  $invalidAddresses = sendEmail($body, $addresses);
+  return $invalidAddresses;
 }
 
 function sendEmail($body, $addresses){
+  if (empty($addresses)) {
+    return null;
+  }
   $mail = new PHPMailer(true);
 
   $mail->isSMTP();
   $mail->CharSet    = 'UTF-8';
   $mail->Host       = 'smtp.profiwh.com';
   $mail->SMTPAuth   = true;
-  $mail->Username   = 'noreply@scomeq.cz';
-  $mail->Password   = 'lkwzk1r';
-  $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; 
+  $mail->Username   = 'ssok@ssok.cz';
+  $mail->Password   = 'lipno';
+  $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
   $mail->Port       = 587;
 
-  $mail->setFrom('noreply@aito.cz', 'Správa silnic Olomouckého kraje');
+  $mail->setFrom('ssok@ssok.cz', 'Správa silnic Olomouckého kraje');
 
-  print_r($addresses);
+  // print_r($addresses);
+  $invalidAddresses = [];
   foreach($addresses as $key => $address){
-    $mail->addAddress($address);
+    try{
+      $mail->addAddress($address);
+    }
+    catch(Exception $e) {
+      $invalidAddresses[] = $address;
+    }
   }
 
   $mail->isHTML(true);
-  $mail->Subject = 'Zpráva z SSOK';
+  $mail->Subject = 'Zpráva z intranetového portálu SSOK';
   $mail->Body    = $body;
 
   $mail->send();
+
+  return $invalidAddresses;
 }

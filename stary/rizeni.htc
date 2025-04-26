@@ -1,0 +1,22 @@
+<component>
+	<PUBLIC:ATTACH EVENT="onclick" ONEVENT="klik(element)" />
+	<PUBLIC:ATTACH EVENT="onmouseover" ONEVENT="over(element)" />
+	<PUBLIC:ATTACH EVENT="onmouseout" ONEVENT="out(element)" />
+	<script>
+		function over(element) { 
+			if (element.id != "")
+			  element.style.backgroundColor="#2C7387";
+ 	    }
+		function out(element) {
+			  element.style.backgroundColor="";
+		}
+		function klik(element) { 
+			if (element.id != "") {
+			  getObj("id_vr").value = Math.floor(element.id/1000); 
+			  getObj("id_verze").value = element.id%1000; 
+			  getObj("razeni").submit();
+			}
+		}
+	</script>
+</component>
+

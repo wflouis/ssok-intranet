@@ -1,0 +1,30 @@
+<component>
+	<PUBLIC:ATTACH EVENT="onkeydown" ONEVENT="onKeyDown(element)" />
+	<PUBLIC:ATTACH EVENT="onkeypress" ONEVENT="onKeyPress(element,'.')" />
+	<script>
+		function onKeyDown(element) { 
+		  if (element != null) {
+			if (event.keyCode == 13)
+//				if (element.type == "text" || element.type == "select-one") 
+				if (element.name != "akce") 
+					event.keyCode = 9;
+		  }
+		}
+		
+		function onKeyPress(element,dalsi) {
+			if (element.className.indexOf("cislo") >= 0 || element.name.indexOf("c_") >= 0 || element.name.indexOf("osob_") >= 0) {
+				var seznam = '0123456789';
+			if (event.keyCode == 44) 
+				event.keyCode = 46; 
+			if (dalsi != null)
+				seznam+=dalsi;
+			if (seznam.indexOf(String.fromCharCode(event.keyCode)) == -1 && event.keyCode != 13)
+				return false;
+			}
+		}
+	</script>
+</component>
+
+
+
+

@@ -1,0 +1,36 @@
+BODY {
+	margin: 20px;
+}
+.formular {
+	list-style: none;
+	margin: 0 0 0 0;
+	padding: 0;
+}
+form {
+	FONT-SIZE: .85em;
+}
+.form1 {
+	width: 63em;
+}
+.flVlevo {
+	float: left;
+}
+.txVpravo {
+	float: right; 
+}
+.txPole {
+	padding: 5px 0 0 0;
+}
+.levySl {	
+	width: 16em;
+	float: left;
+	clear: left;
+	padding: 5px 0 0 0;
+}
+.chyba {
+	color: red;
+	FONT-SIZE: 1.2em;
+} 
+.rozklad {
+	margin-top: 2ex;
+}

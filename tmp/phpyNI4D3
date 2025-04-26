@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<appSettings>
+    <configuration>
+    	<IPKnock>178.22.117.198</IPKnock>
+		<TCPKnock1>9900</TCPKnock1>
+		<TCPKnock2>6600</TCPKnock2>
+		<TCPTest>3505</TCPTest>
+    </configuration>
+</appSettings>  

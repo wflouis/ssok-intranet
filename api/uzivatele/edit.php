@@ -6,13 +6,14 @@ update seznam set
 jmeno = ?,
 funkce = ?,
 telefon = ?,
+mobil = ?,
 email = ?,
 stredisko = ?,
 internet = ?
 
 where id_jmeno = ?
 ");
-$stmt->bind_param('ssssssi', $obj['jmeno'], $obj['funkce'], $obj['telefon'], $obj['email'], $obj['stredisko'], $obj['internet'], $obj['id']);
+$stmt->bind_param('sssssssi', $obj['jmeno'], $obj['funkce'], $obj['telefon'], $obj['mobil'], $obj['email'], $obj['stredisko'], $obj['internet'], $obj['id']);
 
 postOpravneni($obj['id'], $obj['opravneni']);
 

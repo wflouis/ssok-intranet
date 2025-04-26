@@ -18,7 +18,7 @@ faktura,
 uhrazeno,
 zadal
 ) 
-values (?,?,?,?,?,?,?,?,?,?)
+values (?,?,?,?,?,?,?,?,?,?,?,?)
 ");
 echo mysqli_error($link);
 $stmt->bind_param('sssssssssssi', $obj['cisloSmlouvy'],$obj['typSmlouvy'],$obj['datumUzavreni'],$obj['predmet'],$obj['cena'],$obj['velikost'],$obj['rodneCislo'],$obj['datumOd'],$obj['datumDo'],$obj['faktura'],$obj['uhrazeno'],$_SESSION['id_jmeno']);

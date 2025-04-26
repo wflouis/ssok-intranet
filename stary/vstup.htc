@@ -1,0 +1,20 @@
+<PUBLIC:COMPONENT>  
+	<PUBLIC:ATTACH EVENT="onkeypress" FOR="element" ONEVENT="cisla()" />  
+	<PUBLIC:ATTACH EVENT="onkeydown" FOR="element" ONEVENT="enter()" />  
+	<script>
+		function enter() {
+			if (window.event.keyCode == 13 && element.className!="enter") 
+				if (element.type == "text" || element.type == "select-one") 
+					window.event.keyCode = 9;
+		}
+		function cisla() { 
+			if (element.className.indexOf("cislo") >= 0 && element.className.indexOf("text") == -1) {
+				var seznam = '0123456789.: ';
+				if (window.event.keyCode == 44) 
+					window.event.keyCode = 46; 
+				if (seznam.indexOf(String.fromCharCode(window.event.keyCode)) == -1 && window.event.keyCode != 13)
+					window.event.returnValue = false ;
+			}
+		}
+	</script>
+</PUBLIC:COMPONENT>    

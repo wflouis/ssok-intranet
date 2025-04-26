@@ -1,0 +1,19 @@
+<component>
+	<PUBLIC:ATTACH EVENT="onclick" ONEVENT="klik(element)" />
+	<PUBLIC:ATTACH EVENT="onmouseover" ONEVENT="over(element)" />
+	<PUBLIC:ATTACH EVENT="onmouseout" ONEVENT="out(element)" />
+	<script>
+		function over(element) { 
+			  element.style.backgroundColor="#2C7387";
+ 	    }
+		function out(element) {
+			  element.style.backgroundColor="";
+		}
+		function klik(element) { 
+			  getObj("nacist").value = 1; 
+			  getObj("id_jmeno").value = element.id; 
+			  getObj("razeni").submit();
+		}
+	</script>
+</component>
+

@@ -23,12 +23,24 @@ function alertError(r, code){
 }
 
 class MTable {
-  getRowsDefault(order, orderDirection) {
+  getRowsDefault(order, orderDirection, limit) {
     return fetch(
       this.api + 'get.php' +
       '?search=' + (this.search ? this.search.value : '') +
       '&order=' + order +
-      '&order-direction=' + orderDirection
+      '&order-direction=' + orderDirection +
+      (limit ? '&limit=' + limit : '')
+    )
+    .then(r => r.json())
+  }
+
+  getRowsExport(order, orderDirection, limit) {
+    return fetch(
+      this.api + 'export.php' +
+      '?search=' + (this.search ? this.search.value : '') +
+      '&order=' + order +
+      '&order-direction=' + orderDirection +
+      (limit ? '&limit=' + limit : '')
     )
     .then(r => r.json())
   }
@@ -43,7 +55,7 @@ class MTable {
   }
   fillRowObj(row, exclude){
     let elValues = row.querySelectorAll('td[name]')
-  
+
     if(!row.obj) row.obj = {}
 
     elValues.forEach(e => {
@@ -57,7 +69,7 @@ class MTable {
   // replaces cells with edit inputs and dynamically updates row.obj
   formatRowEditBase(row){
     row.contentEditable = true
-    
+
     if(this.formatRowEdit) this.formatRowEdit(row, row.cols)
 
     return row
@@ -88,12 +100,20 @@ class MTable {
   constructor(api, editFormattedColumns, tableBody){
     this.api = api
     this.editFormattedColumns = editFormattedColumns ?? []
-    
+
     this.getRows = this.getRowsDefault
 
     this.tableBody = tableBody ?? document.getElementById('table-body')
     this.tableBody.spellcheck = false
     this.table = this.tableBody.parentNode
+
+    // remove thead column akce
+    if(!writePermission){
+      let akce = this.table.querySelector('thead td:last-child')
+      if(akce.innerHTML.trim().toLowerCase() == 'akce'){
+        akce.remove()
+      }
+    }
 
     // sort
     let columns = this.table.querySelectorAll('thead td:not([nosort])')
@@ -104,7 +124,7 @@ class MTable {
 
         columns.forEach(c => c.className='')
         c.classList.add('sort-' + sort)
-        
+
         let order = c.getAttribute('column')
         this.order = order
         this.orderDir = sort
@@ -117,9 +137,19 @@ class MTable {
     this.columns = columns
   }
 
+  setTitle(title){
+    let el = document.createElement('span')
+    el.classList.add('table-title')
+    el.innerHTML = title
+
+    this.tableBody.parentNode.insertAdjacentElement('beforebegin', el)
+  }
   setNewButton(name){
+    if(!writePermission) return
+
     let btnNew = document.createElement('a')
     btnNew.classList.add('icon', 'table-new-icon')
+    btnNew.title = 'Vytvořit nový záznam'
 
     btnNew.onclick = this.displayCreate
 
@@ -135,11 +165,152 @@ class MTable {
     search.oninput = () => {
       clearTimeout(searchTimeoutId)
       searchTimeoutId = setTimeout(this.getRowsDisplay, 500)
+      window.history.pushState(null, '', window.location.pathname + '?search=' + search.value)
     }
 
     this.tableBody.parentNode.insertAdjacentElement('beforebegin', search)
+    search.focus()
 
     this.search = search
+  }
+
+  setExport(columns){
+    if(!columns) columns = this.columns
+
+    let exportEl = document.createElement('a')
+    exportEl.innerText = 'Export CSV (max 5000 řádků)'
+
+    exportEl.onclick = async () => {
+      let loading = loadingScreen()
+
+      let rows = await this.getRowsExport(this.order, this.orderDir, 5000)
+/*
+      let csv = ''
+      
+      if(rows.length > 0){
+        for(var data in rows[0]){
+          if (data !== 'clearCh') {
+              csv += data + ';'
+          }
+        }
+      }
+
+      csv += '\n'
+
+      for(let row of rows){
+        for(var property in row){
+          if (property !== 'clearCh') {
+            let text = row[property]
+            csv += text + ';'
+          }
+        }
+        csv += '\n'
+      }
+
+      let fileName = (this.search.value.trim() == '' ? 'smlouvy' : this.search.value.trim()) + '.csv'
+
+*/
+      let csv = '<table><thead>'
+      
+      let cols = []
+  
+      if(rows.length > 0){
+        for(var data in rows[0]){
+          if (data !== 'clearCh') {
+              csv += '<td>' + data + '</td>'
+          }
+        }
+      }
+
+      csv += '</thead>'
+
+      for(let row of rows){
+        csv += '<tr>'
+        for(var property in row){
+          if (property !== 'clearCh') {
+            let text = ''
+            if (row[property] !== null) {
+              text = row[property]
+            }
+            csv += '<td>' + text + '</td>'
+          }
+        }
+        csv += '</tr>'
+      }
+    
+      csv += '</table>'
+
+      let fileName = (this.search.value.trim() == '' ? 'smlouvy' : this.search.value.trim()) + '.xls'
+
+      let blob = new Blob([csv], {type: "text/html"});
+      let file = window.URL.createObjectURL(blob);
+      let a = document.createElement('a')
+			a.setAttribute("download", fileName)
+			a.href = file
+			a.target = '_blank'
+			a.click()
+
+      loading.remove()
+    }
+    this.tableBody.parentNode.insertAdjacentElement('beforebegin', exportEl)
+  }
+
+  setExportOld(columns){
+    if(!columns) columns = this.columns
+
+    let exportEl = document.createElement('a')
+    exportEl.innerText = 'Export CSV (max 5000 řádků)'
+  
+    exportEl.onclick = async () => {
+      let loading = loadingScreen()
+
+      let rows = await this.getRows(this.order, this.orderDir, 5000)
+
+      let csv = '<table><tr>'
+      let cols = []
+      for(let i = 0; i < columns.length; i++){
+        let name = columns[i].getAttribute('title') ?? columns[i].innerText
+        let columnName = columns[i].getAttribute('column')
+        csv += '<td>' + name + '</td>'
+        cols.push(columnName)
+        // if(i < columns.length - 1) csv += ';'
+      }
+      csv += '</tr>'
+      for(let row of rows){
+        csv += '<tr>'
+        for(let j = 0; j < cols.length; j++){
+          let data = row[cols[j]]
+          let cellContent = ''
+
+          if(cols[j] == 'partneri'){
+            for(let i = 0; i < data.length; i++){
+              cellContent += data[i].nazev + '<br/>'
+            }
+          }
+          else{
+            cellContent = data.trim().replace(/\s\s+/g, ' ')
+          }
+          csv += '<td>' + cellContent + '</td>'
+          // if(j < cols.length - 1) csv += ';'
+        }
+        csv += '</tr>'
+        // csv += '\n'
+      }
+      csv += '</table>'
+
+      let fileName = (this.search.value.trim() == '' ? 'smlouvy' : this.search.value.trim()) + '.xls'
+
+      let blob = new Blob([csv], {type: "text/html"});
+      let file = window.URL.createObjectURL(blob);
+      let a = document.createElement('a')
+			a.setAttribute("download", fileName)
+			a.href = file
+			a.target = '_blank'
+			a.click()
+
+      loading.remove()
+    }
+    this.tableBody.parentNode.insertAdjacentElement('beforebegin', exportEl)
   }
 
   getRowsDisplay = () => {
@@ -148,17 +319,15 @@ class MTable {
 
   rowElement(obj, create){
     let row = document.createElement('tr')
-    row.innerHTML = this.rowElementBase(obj) + `
-    <td akce class='action-default' contenteditable='false'>
-      <a class="icon td-xmark"></a>
-    </td>
-    <td akce class='action-edit' contenteditable='false'>
-      <a class="icon td-save"></a><a class="icon td-cancel"></a>
-    </td>
-    <td akce class='action-create' contenteditable='false'>
-      <a class="icon td-save"></a><a class="icon td-cancel"></a>
-    </td>`
+    row.innerHTML = this.rowElementBase(obj)
     row.obj = obj
+
+    if(!writePermission) return row
+
+    row.innerHTML += `
+    <td akce class='action-default' contenteditable='false'><a title="Smazat" class="icon td-xmark"></a></td>
+    <td akce class='action-edit' contenteditable='false'><a title="Uložit" class="icon td-save"></a><a title="Zrušit" class="icon td-cancel"></a></td>
+    <td akce class='action-create' contenteditable='false'><a title="Uložit" class="icon td-save"></a><a title="Zrušit" class="icon td-cancel"></a></td>`
 
     let edit = (e) => {
       if(parentHasTag(e.target, 'A')) return
@@ -201,7 +370,7 @@ class MTable {
       actionsCreate[0].onclick = (e) => this.saveCreate(e.target.parentNode.parentNode)
       actionsCreate[1].onclick = (e) => this.discardCreate(e.target.parentNode.parentNode)
     }
-    
+
     return row
   }
 
@@ -221,9 +390,9 @@ class MTable {
   apiPost(row, cb, cbError){
     let formData = row.formData
     if(!formData) formData = new FormData()
-    
+
     formData.append('obj', JSON.stringify(row.obj))
-    
+
     fetch(this.api + 'post.php', {
       method:'post',
       body:formData
@@ -249,7 +418,7 @@ class MTable {
   apiPostEdit(row, cb, cbError){
     let formData = row.formData
     if(!formData) formData = new FormData()
-    
+
     formData.append('obj', JSON.stringify(row.obj))
 
     fetch(this.api + 'edit.php', {
@@ -285,7 +454,7 @@ class MTable {
     if(obj['jmeno']) name = '"' + obj['jmeno'] + '"'
     else if(obj['nazev']) name = '"' + obj['nazev'] + '"'
     else if(obj['cislo']) name = '"' + obj['cislo'] + '"'
-    
+
     return name
   }
   displayDelete(row){
@@ -399,6 +568,7 @@ class SelectContainer{
 
     let selectedRow = document.createElement('div')
     selectedRow.classList.add('flex')
+    selectedRow.classList.add('nowrap')
     selectedRow.innerHTML = `
     ${text}
     <div class='sgap gap-stretch-h'></div>
@@ -465,7 +635,7 @@ function selectFormat(row, colName, objValueName, objTextName, apiGet, valueName
 
       select.appendChild(option)
 
-      if(obj[valueName] == row.obj[objValueName] 
+      if(obj[valueName] == row.obj[objValueName]
         || !row.obj[objValueName] // if new row is created, select the first select option
       ) {
         row.obj[objValueName] = obj[valueName]

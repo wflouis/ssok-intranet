@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+	<title>Tisk finančního přehledu</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1250">	
+	<LINK href="tisk.css" type=text/css rel=stylesheet>
+	<script language="JavaScript" src="index.js"></script>
+</head>
+<body onLoad="tisk.printing.Print(true);">
+<h3>Součtový finanční přehled rekreačních poukazů</h3>
+<table cellpadding="0" cellspacing="0">
+<script>if (opener.getObj('podle_obj').checked) document.write("<tr><td colspan='2'>Objekt:</td><td>"+opener.getObj('n_objektu').options(opener.getObj('n_objektu').value).innerText+"</td></tr>");</script>
+<script>if (opener.getObj('podle_dat').checked) document.write("<tr><td>Datum nástupu </td><td>od</td><td>"+opener.getObj('dat_od').value+"</td><td>do</td><td>"+opener.getObj('dat_do').value+"</td></tr>");</script>
+<script>if (opener.getObj('podle_pou').checked) document.write("<tr><td>Číslo poukazu </td><td>od</td><td>"+opener.getObj('pou_od').value+"</td><td>do</td><td>"+opener.getObj('pou_do').value+" v roce "+opener.getObj('rok').value+"</td></tr>");</script>
+</table><br>
+<span id=oblast></span>
+<object id=tisk style="display:none"
+	classid="clsid:1663ed61-23eb-11d2-b92f-008048fdd814"
+	codebase="http://www.su-prostejov.cz/rekreace/ScriptX.cab#Version=6,2,433,14">
+</object>
+<script>
+	getObj("oblast").innerHTML = opener.getObj("oblast").innerHTML;
+	tisk.printing.header = "";
+	tisk.printing.footer = "";
+	tisk.printing.portrait = false;
+	tisk.printing.leftMargin = 0.0;
+	tisk.printing.topMargin = 0.0;
+	tisk.printing.rightMargin = 0.0;
+	tisk.printing.bottomMargin = 0.0;
+</script>
+</body>
+</html>

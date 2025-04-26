@@ -1,0 +1,22 @@
+<component>
+	<PUBLIC:ATTACH EVENT="onclick" ONEVENT="klikTab(element)" />
+	<PUBLIC:ATTACH EVENT="onmouseover" ONEVENT="over(element)" />
+	<PUBLIC:ATTACH EVENT="onmouseout" ONEVENT="out(element)" />
+	<script>
+		function over(element) { 
+			if (element.id != "")
+			  element.style.backgroundColor="#2C7387";
+ 	    }
+		function out(element) {
+			  element.style.backgroundColor="";
+		}
+		function klikTab(element) { 
+			idSmlouvy = element.id.substr(1,10); 
+			if (idSmlouvy>0) {
+				window.opener.document.getElementById("souvisejici").value = idSmlouvy;
+				window.opener.document.getElementById("textVazba").innerHTML = "<table><tr>"+element.innerHTML+"</tr></table>";
+				window.close();
+			}
+		}
+	</script>
+</component>

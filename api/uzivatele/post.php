@@ -2,10 +2,10 @@
 require 'base-write.php';
 
 $stmt = mysqli_prepare($link, "
-insert into seznam (jmeno, funkce, telefon, email, stredisko, internet)
-values (?,?,?,?,?,?)
+insert into seznam (jmeno, funkce, telefon, mobil, email, stredisko, internet)
+values (?,?,?,?,?,?,?)
 ");
-$stmt->bind_param('ssssss', $obj['jmeno'], $obj['funkce'], $obj['telefon'], $obj['email'], $obj['stredisko'], $obj['internet']);
+$stmt->bind_param('sssssss', $obj['jmeno'], $obj['funkce'], $obj['telefon'], $obj['mobil'], $obj['email'], $obj['stredisko'], $obj['internet']);
 echo $stmt->error;
 
 print_r($obj);

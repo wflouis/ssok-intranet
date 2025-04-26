@@ -2,20 +2,22 @@
 	$homePage = true;
 	include 'over.php';
 	include "hlava.php";
-	include "nabidka.php"; 
+	include "nabidka.php";
 ?>
 
 <div>
+	<script>let writePermission = <?=(strpos($_SESSION['prava'], 'M') !== false ? 'true' : 'false')?></script>
 	<script src='js/seznam.js' defer></script>
 	<script src='js/smlouvy.js' defer></script>
 
 	<h2 class="obsah-title">Smlouvy</h2>
+	<?=tableText()?>
 	<div class="obsah">
 		<div class='flex'>
 			<select id="select-typ">
 				<option value="%">Vše</option>
 				<?php
-					$result = mysqli_query($link, 'select id_typuSmlouvy as id, popis from typysmluv');
+					$result = mysqli_query($link, 'select id_typuSmlouvy as id, popis from typySmluv');
 					while($radek = mysqli_fetch_assoc($result)){
 				?>
 					<option value="<?=$radek['id']?>"><?=$radek['popis']?></option>
@@ -39,14 +41,15 @@
 			<select id='select-rok'>
 				<option value=''>Vše</option>
 				<?php
-					for($year = date('Y'); $year >= 2002; $year--){
+					for($year = 2021; $year >= 2002; $year--){
 						echo "<option value='$year'>$year</option>";
 					}
 				?>
 			</select>
 			<div class='gap'></div>
-			<span class='flex flex-center-v'>platnost od: </span><input id='input-od' type='date'>
-			<span class='flex flex-center-v'>  do: </span><input id='input-do' type='date'>
+			<span class='flex flex-center-v'>Platnost od: </span><input id='input-od' type='date'>
+			<!-- <span class='flex flex-center-v'>  do: </span> -->
+			<input style='display:none' id='input-do' type='date'>
 		</div>
 		<table id='smlouvy' class="table">
 			<thead>
@@ -56,7 +59,6 @@
 					<!-- <td column="predmet">Předmět</td> -->
 					<td column="datumUzavreni" title='Datum uzavření'>Datum uz.</td>
 					<td column="cena">Cena</td>
-					<td column="velikost">Velikost</td>
 					<td column="strediska" nosort title='Střediska'>Střed.</td>
 					<td column="partneri" nosort>Partneři</td>
 					<td column="rodneCislo" title='Fyzická osoba'>Fyz. osoba</td>

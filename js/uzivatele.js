@@ -21,6 +21,7 @@ function rowElementBase(user){
   <td name="jmeno">${user['jmeno'] ?? ''}</td>
   <td name="funkce">${user['funkce'] ?? ''}</td>
   <td name="telefon" style='white-space:nowrap'>${user['telefon'] ?? ''}</td>
+  <td name="mobil" style='white-space:nowrap'>${user['mobil'] ?? ''}</td>
   <td name="email">${user['email'] ?? ''}</td>
   <td name="stredisko" contenteditable='false'>${user['stredisko'] ?? ''}</td>
   <td name="internet" contenteditable='false'>${user['internet'] ?? ''}</td>

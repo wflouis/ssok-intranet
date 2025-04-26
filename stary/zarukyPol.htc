@@ -1,0 +1,37 @@
+<component>
+	<PUBLIC:ATTACH EVENT="onclick" ONEVENT="klikTab(element)" />
+	<PUBLIC:ATTACH EVENT="ondblclick" ONEVENT="dvojklik(element)" />
+	<PUBLIC:ATTACH EVENT="onmouseover" ONEVENT="over(element)" />
+	<PUBLIC:ATTACH EVENT="onmouseout" ONEVENT="out(element)" />
+	<script>
+		function over(element) { 
+		  radek= element.id.substr(1,10);
+		  if (radek>0) {
+			  getObj('p'+radek).style.backgroundColor="#2C7387";
+			  getObj('p'+radek).style.color="white";
+		  }
+		}
+		function out(element) {
+		  radek= element.id.substr(1,10);
+		  if (radek>0) {
+			  getObj('p'+radek).style.backgroundColor="";
+			  getObj('p'+radek).style.color="";
+		  }
+		}
+		function dvojklik(element) {
+			radek= element.id.substr(1,10);
+			if (radek>0) {
+				getObj('id_akce').value=radek;
+				getObj('formAkce').submit();
+			}
+		}
+		function klikTab(element) { 
+		  if (element != null) {
+			  radek= element.id.substr(1,10); 
+			  if (radek>0) 
+		   		  rozbal('d'+radek);
+		  }
+		}
+	</script>
+</component>
+

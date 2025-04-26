@@ -1,0 +1,37 @@
+<component>
+	<PUBLIC:ATTACH EVENT="onclick" ONEVENT="klik(element)" />
+	<PUBLIC:ATTACH EVENT="onmouseover" ONEVENT="over(element)" />
+	<PUBLIC:ATTACH EVENT="onmouseout" ONEVENT="out(element)" />
+	<script>
+		if (getObj('ousko1').className == 'aktivni' && getObj('formSeznam').najit.visible)
+			getObj('formSeznam').najit.focus();
+			
+		function over(element) { 
+			if (element.id != "")
+			  element.style.backgroundColor="#2C7387";
+ 	    }
+		function out(element) {
+			  element.style.backgroundColor="";
+		}
+		function klik(element) { 
+			radek = element.id.substr(1,10); 
+			if (radek>0) 
+				with(getObj('formSeznam')) { 
+					if (typeof(id_smlouvy)!== "undefined")
+						id_smlouvy.value=radek;
+					else
+						id_smernice.value=radek; 
+					if (element.tagName=="A")
+						akce.value = "Zobrazit"; 
+					else {
+						akce.value = "Detail"; 
+						okno.value = "2";
+					}
+					akce.click(); 
+					akce.value = "Najít"; 
+					window.event.cancelBubble = true;
+			    }
+		}
+		
+	</script>
+</component>

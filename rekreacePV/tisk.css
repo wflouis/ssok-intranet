@@ -1,0 +1,56 @@
+body {
+	FONT-FAMILY: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+h1 {
+	font-weight : bold;
+	font-size : 26px;
+}
+h3, .h3 td {
+	font-weight : bold;
+	font-size : 18px;
+}
+td {
+	font-size : 12px;
+	padding-left : 5;
+	padding-right : 10;
+}
+.prehled td {
+	font-size : 10px;
+	font-family : Arial, Helvetica, sans-serif;
+	text-align : right;
+}
+span, p {
+	FONT-FAMILY: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size : 12px;
+}
+.zahlavi {
+	background-color : Navy;
+	color : White;
+	height : 20;
+	border-bottom : 1 solid Black;
+}
+.zahlavi td {
+	width : 75;
+}
+.sirka td {
+	width : 150;
+}
+.tabulka, .tabulka input, #objekt {
+	text-align : right;
+}
+.lichy {
+	background-color : #F5F5F5;
+}
+.sudy {
+	background-color : #DCDCDC;
+}
+.celkem td {
+	padding-right : 7;
+	font-weight : bold;
+}
+#zam_j,#zam_c,#zad_j,#zad_c,#ciz_j,#ciz_c,#cid_j,#cid_c {
+	display: block;
+}
+.cislo {
+	text-align : right;
+}

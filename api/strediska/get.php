@@ -8,7 +8,7 @@ $orderDirection = empty($_GET['order-direction']) ? 'desc' : $_GET['order-direct
 $stmt = mysqli_prepare($link, "
 select id_str as id, zkratka, nazev, poradi
 from seznam_str
-where lower(nazev) like lower(?)
+where nazev like ?
 order by $order $orderDirection
 ");
 echo mysqli_error($link);

@@ -1,0 +1,35 @@
+Adresa:	Lipenská 120, 772 11 Olomouc	SSOK
+Ústøedna:	585 170 311	SSOK
+Fax:	585 311 115	SSOK
+Bílá linka:	841 119 119	SSOK
+Centrální e-mail:	ssok@ssok.cz	SSOK
+Adresa:	Lipenská 120, 772 11 Olomouc	SUOl
+Vrátnice:	585 151 422	SUOl
+Fax:	585 315 866    	SUOl
+Dispeèer ZÚ - pøímá linka:	585 311 049 	SUOl
+Fax u dispeèera:	585 311 528    	SUOl
+Hlavní e-mail:	olomouc@ssok.cz	SUOl
+Adresa:	Choøelice 1070, Litovel	CeLi
+Fax :	585 344 086	CeLi
+Adresa:	Hvìzdné Údolí, Šternberk	CeSt
+Fax :	585 015 028	CeSt
+Adresa:	Kostelecká 55, 796 56 Prostìjov	SUJi
+Fax Prostìjov:	582 331 616	SUJi
+Fax Pøerov:	581 210 780	SUJi
+GSM brána Prostìjov:	724 176 009	SUJi
+GSM brána Pøerov:	723 730 664	SUJi
+Hlavní e-mail:	sujih@ssok.cz	SUJi
+Adresa:	Kostelecká 55, 796 56 Prostìjov	CePv
+Adresa:	Konice, Vyšehrad	CeKo
+Adresa:	Koberská 402, Brodek u Prostìjova	CeBr
+Tel.:	582 370 320	CeBr
+Adresa:	Tovaèovská 974, 751 52 Pøerov	CePr
+	Husova 348, 752 01 Kojetín	CePr
+Adresa:	Zábøežská 70, 787 01 Šumperk	SUSu
+Ústøedna:	583 215 403	SUSu
+Fax:	583 215 471	SUSu
+Hlavní e-mail:	sumperk@ssok.cz	SUSu
+Adresa:	Vikýøice 544	CeVi
+Adresa:	Zábøežská 198, Hanušovice	CeHa
+Adresa:	Tunklova 7, Zábøeh	CeZa
+Adresa:	Družstevní 	CeMo

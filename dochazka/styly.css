@@ -1,0 +1,145 @@
+body {
+	margin: 0ex;
+	text-align: center;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: smaller;
+	color: #999;
+	background-color: #3f3f3f;
+}
+.telo {
+	text-align: left;
+	margin: 0 auto 0 auto;
+	width: 800px;
+}
+.horniOkraj {
+	padding: .5ex 0 .5ex 0;
+	background-color: #333333;
+}
+.levySl {
+	width: 16ex;
+	float: left;
+}
+.sloupec {
+	width: 13ex;
+}
+.levySl25 {
+	width: 25ex;
+	float: left;
+}
+.prihlaseni {
+	width: 42ex;
+	padding: 3ex 0 0 3ex;
+	margin: 2ex 0 0 2ex;
+}
+legend {
+	color: #999;
+	padding: 0 1ex 0 1ex;
+}
+fieldset {
+	border: 1px solid;
+}
+input {
+	margin-right: 1ex;
+}
+.licha {
+	background-color: #333333;
+}
+#o1, #o2, #o3, #o4, #o5 {
+	display: none;
+}
+.zalozky {
+	background-color: #333333;
+	font-size: small;
+	font-weight: bold;
+	padding-bottom: 1ex;
+}
+.zalozky a {
+	text-decoration: none;
+	color: #999;
+	padding: 1ex 3ex 1ex 3ex;
+	margin: 0 1ex 0 0;
+}
+.zalozky a:hover {
+	color: white;
+}
+.aktivni {
+	background-color: #3f3f3f;
+}
+.poznamka {
+	text-align: justify;
+	font-style: italic;
+}
+/************* Píchaèky  ***************/
+.pichacky td {
+	padding: 2ex;
+	width: 15ex;
+	background-color: #575757;
+}
+.pichacky td:hover {
+	background-color: #888888;
+	color: black;
+}
+.zaznamy td {
+	font-size: smaller;
+	padding: .2ex 1ex .2ex 1ex;	
+}
+.zarVpravo {
+	text-align: right;
+}
+.sdeleni {
+	width: 400px;
+	text-align: left;
+	margin: 0 auto 0 auto;
+}
+/************* Docházkový list *************/
+.dochList td {
+	padding: .2ex 1ex .2ex 1ex;
+	font-size: smaller;
+	text-align: right;
+}
+td.zarVlevo {
+	text-align: left;
+}
+.zahlavi {
+	font-weight: bold;
+	background-color: #575757;
+}
+.den {
+	background-color: #575757;
+}
+.sone {
+	background-color: #333333;
+}
+.soucet {
+	font-weight: bold;
+}
+.tlacitko {
+	color: #999;
+	border: 1px solid #999;
+	padding: 1ex 2ex 1ex 2ex;
+	font-weight: bold;
+	text-decoration: none;
+	margin: 0 2ex 0 0;
+}
+.tlacitko:hover {
+	color: white;
+}
+.h3 {
+	font-size: larger;
+	font-weight: bold;
+	padding: 1ex 2ex 3ex 0;
+}
+/*********** Parametry  **************/
+.cislo {
+	text-align: right;
+	padding-right: 1ex;
+}
+/*********** Seznam  ************/
+.seznamZam tr {
+	cursor: default;
+}
+.seznamZam td {
+	font-size: smaller;
+	padding: .2ex 1ex .2ex 1ex; 
+}
+

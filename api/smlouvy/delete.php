@@ -4,7 +4,7 @@ require 'base-write.php';
 $id = $_GET['id'];
 
 $stmt = mysqli_prepare($link, "
-delete from partneri where id_partnera = ?
+delete from smlouvy where id_smlouvy = ?
 ");
 $stmt->bind_param('i', $id);
 

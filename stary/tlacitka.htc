@@ -1,0 +1,12 @@
+<component>
+	<PUBLIC:ATTACH EVENT="onclick" ONEVENT="smazat(element)" />
+	<script>
+		function smazat() {
+			if (window.confirm("Opravdu chcete vybraný záznam smazat?")) {
+				getObj("akce").value = "Smazat";
+				getObj("razeni").submit();
+			}
+		}
+	</script>
+</component>
+

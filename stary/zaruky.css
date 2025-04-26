@@ -1,0 +1,166 @@
+body {
+	font-family:tahoma,sans-serif;
+	font-size:75%;
+	margin: auto;
+	text-align: center;
+	background-color : #334483;
+}
+label {
+	width: 120px;
+	padding-left: 10px;		
+}
+.vpravo {
+	padding: 2 0 2 0px;
+	position: relative;
+	float: right;
+}
+form {
+	margin: 0;
+}
+.text {
+	border-width: 0 0 1 0px;
+	border-style: solid;
+}
+.button {
+	width: 60pt;
+	font-size: 75%;
+}
+input.button, input.text  {
+	margin: 0 10 0 0;
+}
+#telo {
+	text-align:left; 
+	width:790px;
+	padding: 10px;
+	height: 100%;
+	background-color : #EEEEE6;
+}
+.predmet {
+	background-color : #CCECF2;
+	padding: 2 0 2 0px;
+}
+#formSeznam {
+	width: 100%;
+	padding: 0 0 0 5px;
+}
+#okraj {
+	position: relative;
+	top: -1;
+	border-width: 0 0 0 1px;
+	border-style: solid;
+	z-index: 1;
+}
+h1, h2, h3 {
+	color: #FF8000;
+	margin: 0 0 10 0;
+}
+.chyba {
+	color: red;
+}
+.ouska {
+	width: 100%;
+}
+.ouska ul {
+	margin: 0;
+	list-style: none;
+	padding: 0;
+}
+.ouska li.aktivni {
+	border-bottom-color: #EEEEE6;
+	background-color : #EEEEE6;
+}
+.ouska li {
+	position: relative;
+	float: left;
+	margin: 0;
+	padding: 5 20 5 20px;
+	text-align: center;
+	font-weight: bold;
+	background-color : #D3D3BE;
+	cursor: hand;
+	border: 1px solid #000000;
+	z-index: 1;
+	behavior: url(ouska.htc);
+	-moz-binding: url(ouska.xbl#ouska);
+}
+#oknoSeznam {
+	position: relative;
+	top: -1;
+	padding : 10 0 10 0px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #000000;
+	clear: both;
+}
+#oknoSeznam ul {
+	list-style: none;
+	float: left;
+	margin: 0 10 0 5px;
+	vertical-align : bottom;
+	padding: 0;
+}
+.tabulka {
+	clear: both;
+	width: 100%;
+	margin: 15 0 0 0px;
+}
+.tabulka td {
+	font-size:75%;
+	padding: 0 15 0 15px;
+}
+#oknoDetail {
+	position: relative;
+	top: -1;
+	padding: 10 0 10 0px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #4A5D18;
+	clear: both;
+	z-index: 0;
+}
+#oknoDetail ul {
+	padding: 0;
+	list-style: none;
+	margin: 0 10 0 5px;
+}
+.lichy,.sudy {
+	behavior: url(zarukyPol.htc);
+}
+.hlavicka {
+	font-weight: bold;
+	color : White;
+	height : 30;
+	background-image: url(obrazky/ram-titul.gif); 
+}
+.detailPol {
+	padding-left : 25;
+	background-color : #F0F8FF;
+}
+.polozkaP {
+	padding-left : 10;
+	color : #49797A;
+}
+.popis {
+	font-weight: bold;
+}
+.skryty, #oknoDetail, #coknoSeznam {
+	display: none;
+}
+.lichy {
+	background-color : #E3FBFF;
+}
+.sudy {
+	background-color : #CCECF2;
+}
+.polozkaH {
+	font-weight: bold;
+}
+.konci {
+	color : Red;
+} 
+.overen {
+	color : Gray;
+} 
+#silnice {
+	display: none;
+}

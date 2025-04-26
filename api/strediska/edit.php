@@ -10,8 +10,10 @@ poradi = ?
 where id_str = ?
 ");
 $stmt->bind_param('ssii', $obj['zkratka'], $obj['nazev'], $obj['poradi'], $obj['id']);
+echo mysqli_error($link);
+echo $stmt->error;
 
-postOstatni($obj['id'], $obj['ostatni']);
+postOstatni($obj['id'], $obj['zkratka'], $obj['ostatni']);
 
 if($stmt->execute()) http_response_code(200);
 else {

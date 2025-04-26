@@ -1,0 +1,115 @@
+.flVlevo {
+	float: left;
+}
+input, select {
+	margin: 0 1ex 0 0;
+}
+.levySl {	
+	width: 23ex;
+	float: left;
+	clear: left;
+	padding-top: .7ex;
+}
+.chyba {
+	color: red;
+	FONT-SIZE: 1.2em;
+} 
+form {
+	margin: 0;
+}
+.ouska {
+	width: 100%;
+}
+.ouska ul {
+	margin: 0;
+	list-style: none;
+	padding: 0;
+}
+.ouska li.aktivni {
+	border-bottom-color: #334483;
+	background-color: #334483;
+}
+.ouska li {
+	position: relative;
+	float: left;
+	margin: 0;
+	padding: 5px 20px 5px 20px;
+	text-align: center;
+	font-weight: bold;
+	cursor: hand;
+	border: 1px solid #7B84B5;
+	z-index: 1;
+	background-color: #637499;
+}
+#oknoSeznam, #oknoDetail, #oknoZaruky, #oknoChyby {
+	padding: 1em;
+	border: 1px solid #7B84B5;
+	position: relative;
+	top: -1px;
+	clear: both;
+	white-space: nowrap;
+	display: none;
+}
+.sirka125 {
+	padding-top: 2ex;
+	width: 125ex;
+	float: left;
+}
+#oknoDetail {
+	width: 173ex;
+}
+#okraj {
+	position: relative;
+	top: -1;
+	border-width: 0 0 0 1px;
+	border-style: solid;
+	border-color: #7B84B5;
+	z-index: 1;
+}
+#seznam tr.doplnek, #zaruky tr.doplnek, #seznamPartneru tr.doplnek, #seznamHlaseni tr.doplnek {
+	FONT-SIZE: 1.7ex;
+	color: gray;
+}
+#seznamHlaseni TD.hlaseniPO  {
+	FONT-SIZE: 1.7ex;
+	color: #66ffff;
+}
+.pozn {
+	FONT-SIZE: 1.7ex;
+	color: gray;
+}
+.portalPO {
+	float: left;
+	width: 100%;
+	position: relative;
+	background-color: #4080bf;
+	padding: 1em;
+	margin-top: 1ex;
+	margin-bottom: 1ex;
+	left: -1em;
+}
+.zaruka {
+	float: left;
+	width: 100%;
+	margin-left: -1em;
+	margin-bottom: 1ex;
+	padding: 1em;
+	background-color: #637499;
+}
+.konci {
+	color: #FF2D2D;
+	font-weight: bold;
+}
+#posun {
+	color: #4169E1;
+	clear: both;
+}
+#posun a.aktivni {
+	text-decoration: underline;
+}
+#posun a:visited {
+	color: #B40000;
+}
+#posun a:hover {
+	color: #FFFFFF;
+}

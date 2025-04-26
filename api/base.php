@@ -2,6 +2,7 @@
 
 session_start();
 require dirname(__FILE__) . '/../databaze.php';
+require dirname(__FILE__) . '/../souborypath.php';
 
 if (!loggedIn()) {
   http_response_code(403);
@@ -10,6 +11,12 @@ if (!loggedIn()) {
 
 function loggedIn(){
   return isset($_SESSION['id_jmeno']);
+}
+
+if(!function_exists('str_contains')){
+  function str_contains($haystack, $needle){
+    return strpos($haystack, $needle) !== false;
+  }
 }
 
 if(isset($_POST['obj'])) {
