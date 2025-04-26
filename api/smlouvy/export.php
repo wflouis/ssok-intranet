@@ -28,9 +28,9 @@ $orderDirection = empty($_GET['order-direction']) ? 'desc' : $_GET['order-direct
 
 $limit = isset($_GET['limit']) ? $_GET['limit'] : 50;
 
-$stmt = mysqli_prepare($link, "SELECT 
+$stmt = mysqli_prepare($link, "SELECT
 (SELECT zkratka FROM seznam_str se JOIN smlouvyStr sm ON id_strediska = id_str WHERE sm.id_smlouvy = smlouvy.id_smlouvy LIMIT 1) as stredisko, 
-smlouvy.id_smlouvy, cisloSmlouvy, datumUzavreni, ico, (select nazev from partneri WHERE partneri.ico = smlouvy.ico LIMIT 1) as partner, rodneCislo,	predmet, cena, datumTxt, datumOd, datumDo, z.id_zaruky, predmetZaruky, datumZarukyOd,	datumZarukyDo, id_kontroly, vysledekKontroly, datumKontroly, zavady, datumOdstraneni, 
+smlouvy.id_smlouvy, cisloSmlouvy, datumUzavreni, ico, rodneCislo, predmet, cena, datumTxt, datumOd, datumDo, z.id_zaruky, predmetZaruky, datumZarukyOd,	datumZarukyDo, id_kontroly, vysledekKontroly, datumKontroly, zavady, datumOdstraneni, 
 (select jmeno from seznam where z.zadal = seznam.id_jmeno LIMIT 1) as jmeno 
 FROM smlouvy  
 LEFT JOIN zaruky z ON smlouvy.id_smlouvy = z.id_smlouvy 
@@ -66,6 +66,13 @@ echo $stmt->error;
 
 $rows = [];
 while($row = mysqli_fetch_assoc($result)){
+    $row['partneri'] = mysqli_fetch_all(mysqli_query($link, "SELECT
+        partneri.id_partnera as id, partneri.nazev
+        from smlouvyPartneri
+        join partneri on partneri.id_partnera = smlouvyPartneri.idPartnera
+        where smlouvyPartneri.id_smlouvy = {$row['id_smlouvy']}
+    "), MYSQLI_ASSOC);
+
     $rows[] = $row;
 }
 

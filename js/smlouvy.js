@@ -39,6 +39,13 @@ function getRowsExport(order, orderDirection, limit) {
     (limit ? '&limit=' + limit : '')
   )
   .then(r => r.json())
+  .then(json => {
+    return json.map(row => {
+      let partneri = row['partneri'] ?? []
+      row['partneri'] = partneri.map(partner => partner['nazev']).join(', \n')
+      return row
+    })
+  })
 }
 
 function stringifyArray(arr, fieldName){
