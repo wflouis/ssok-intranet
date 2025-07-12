@@ -613,6 +613,14 @@ function textFormat(parent, obj, fieldName){
   if(parent) parent.clearCh().appendChild(txt)
   return txt
 }
+
+// Used to edit a cell while preserving the HTML code.
+// HTML code is lost when using the default "contentEditable" format.
+function htmlTextFormat(obj, fieldName){
+  div.innerHTML = obj[fieldName] ?? ''
+  return div
+}
+
 function dateFormat(parent, obj, dateName){
   let date = document.createElement('input')
   date.type = 'date'

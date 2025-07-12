@@ -64,36 +64,50 @@ function loadingScreen(){
 	return loadingScreen
 }
 function downloadFile(url, path){
-	let loading = loadingScreen();
-
 	let name = path.split('/').pop()
-
-	fetch(url +'?path=' + path)
-	.then(async r => {
-		if(r.status != 200){
-			loading.remove()
-			alert('Soubor nenalezen')
-			return
-		}
-
-		r.blob().then(async blob => {
-			loading.remove()
-
-			let ext = name.split('.').pop()
-			if (ext.toLowerCase() == 'url') {
-				let text = await blob.text()
-				let url = text.split("\n")[1].split('=').pop()
-				window.open(url)
+	
+	let isUrl = name.endsWith('.url') || name.endsWith('.URL')
+	if (isUrl) {
+		let loading = loadingScreen();
+		fetch(url +'?path=' + path)
+		.then(async r => {
+			if(r.status != 200){
+				alert('Soubor nenalezen')
 				return
 			}
 
-			let file = window.URL.createObjectURL(blob);
+			return r.blob().then(async blob => {
+				let text = await blob.text()
+				let url = text.split("\n")[1].split('=').pop()
+				window.open(url)
+			});
+		})
+		.finally(() => {
+			loading.remove();
+		})
+		return
+	}
 
-			let a = document.createElement("a")
-			a.setAttribute("download", name)
-			a.href = file
-			a.target = '_blank'
-			a.click()
-		});
-	})
+	window.open(url + "?path=" + path, '_blank')
+	
+	// fetch(url +'?path=' + path)
+	// .then(async r => {
+	// 	if(r.status != 200){
+	// 		alert('Soubor nenalezen')
+	// 		return
+	// 	}
+
+	// 	return r.blob().then(async blob => {
+	// 		let file = window.URL.createObjectURL(blob);
+
+	// 		let a = document.createElement("a")
+	// 		a.setAttribute("download", name)
+	// 		a.href = file
+	// 		a.target = '_blank'
+	// 		a.click()
+	// 	})
+	// 	.finally(() => {
+	// 		loading.remove()
+	// 	})
+	// })
 }

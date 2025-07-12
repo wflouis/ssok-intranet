@@ -100,6 +100,8 @@ function deformatRowEdit(row, cols, save){
     alert('Zpráva bude odeslána na vybrané e-maily')
   }
 
+  row.obj['text'] = cols['text'].innerHTML.trim()
+
   return row
 }
 

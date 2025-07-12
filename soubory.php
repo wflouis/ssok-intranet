@@ -118,17 +118,22 @@
 			<div class='gap'></div>
 		</form>
 		<script>
+			let modul = '<?=$_GET["modul"]?>'
+			let relativePath = '<?=$path?>/'
 			let dirPath = '<?=$basePath . $path?>/'
 			function uploadFiles(e){
 				let createAktualita = document.getElementById('create_aktualita').checked
 				
 				let formData = new FormData();
 				let length = e.target.files.length
-				let filePaths = []
+				let filePathObjs = []
 
 				for(let f of e.target.files){
 					formData.append('files[]', f)
-					filePaths.push(dirPath + f.name)
+					filePathObjs.push({
+						displayPath: 'modul ' + modul + relativePath + f.name,
+						fullPath: dirPath + f.name,
+					})
 				}
 				fetch('api/soubory/post.php?path=' + encodeURIComponent(dirPath) + "&createAktualita=" + (!!createAktualita).toString(), {
 					method:'post',
@@ -150,7 +155,9 @@
 
 					let formData = new FormData()
 					formData.append('obj', JSON.stringify({
-						text: "Byly nahrány nové soubory:\n\n" + filePaths.map(f => `<a onclick="downloadFile('api/soubory/readsoubor.php', '${f}')">${f}</a>`).join('\n'),
+						text: "Byly nahrány nové soubory:\n\n" + filePathObjs.map(fo => {
+							return `<a onclick="downloadFile('api/soubory/readsoubor.php', '${fo.fullPath}')">${fo.displayPath}</a>`
+						}).join('\n'),
 					}))
 
 					fetch('api/aktuality/post.php', {
